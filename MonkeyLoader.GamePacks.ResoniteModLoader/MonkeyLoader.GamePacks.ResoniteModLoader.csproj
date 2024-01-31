@@ -1,20 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <OutputType>Library</OutputType>
     <TargetFramework>net472</TargetFramework>
-    <AssemblyTitle>MonkeyLoader.Unity.Integration</AssemblyTitle>
+    <AssemblyTitle>ResoniteModLoader</AssemblyTitle>
     <AssemblyFileName>$(AssemblyTitle).dll</AssemblyFileName>
-    <RootNamespace>MonkeyLoader.Unity</RootNamespace>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <RootNamespace>ResoniteModLoader</RootNamespace>
   </PropertyGroup>
 
   <Target Name="PackProject" AfterTargets="PostBuildEvent">
     <MSBuild
       Projects="$(MSBuildProjectFile)"
-      Properties="NuPkgName=MonkeyLoader.GamePacks.Unity"
+      Properties="NuPkgName=MonkeyLoader.GamePacks.Resonite"
       Targets="PackNugetPkg">
     </MSBuild>
   </Target>
-  
+
   <ItemGroup>
     <PackageReference Include="PolySharp" Version="1.14.1">
       <PrivateAssets>all</PrivateAssets>
@@ -22,18 +22,11 @@
     </PackageReference>
     <PackageReference Include="Lib.Harmony" Version="2.3.0-prerelease.5" />
     <Reference Include="FrooxEngine">
-      <HintPath>$(ResonitePath)/Resonite_Data/Managed/FrooxEngine.dll</HintPath>
+      <HintPath>$(ResonitePath)\Resonite_Data\Managed\FrooxEngine.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>$(ResonitePath)/Resonite_Data/Managed/UnityEngine.dll</HintPath>
+    <Reference Include="Elements.Core">
+      <HintPath>$(ResonitePath)\Resonite_Data\Managed\Elements.Core.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>$(ResonitePath)/Resonite_Data/Managed/UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MonkeyLoader\MonkeyLoader.csproj" />
   </ItemGroup>
 
 </Project>
