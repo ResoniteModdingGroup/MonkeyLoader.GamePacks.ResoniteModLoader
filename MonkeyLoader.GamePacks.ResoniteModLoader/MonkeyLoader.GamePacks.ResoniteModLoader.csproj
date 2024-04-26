@@ -1,32 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <AssemblyTitle>ResoniteModLoader</AssemblyTitle>
     <AssemblyFileName>$(AssemblyTitle).dll</AssemblyFileName>
     <RootNamespace>ResoniteModLoader</RootNamespace>
   </PropertyGroup>
 
   <Target Name="PackProject" AfterTargets="PostBuildEvent">
-    <MSBuild
-      Projects="$(MSBuildProjectFile)"
-      Properties="NuPkgName=MonkeyLoader.GamePacks.Resonite"
-      Targets="PackNugetPkg">
+    <MSBuild Projects="$(MSBuildProjectFile)" Properties="NuPkgName=MonkeyLoader.GamePacks.Resonite" Targets="PackNugetPkg">
     </MSBuild>
   </Target>
 
   <ItemGroup>
+    <PackageReference Include="MonkeyLoader" Version="0.15.3-beta" />
     <PackageReference Include="PolySharp" Version="1.14.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Lib.Harmony" Version="2.3.0-prerelease.5" />
-    <Reference Include="FrooxEngine">
-      <HintPath>$(ResonitePath)\Resonite_Data\Managed\FrooxEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="Elements.Core">
-      <HintPath>$(ResonitePath)\Resonite_Data\Managed\Elements.Core.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Resonite.Elements.Core" Version="1.0.2" />
+    <PackageReference Include="Resonite.FrooxEngine" Version="2024.4.26.1426" />
+    <PackageReference Include="Zio" Version="0.17.0" />
   </ItemGroup>
 
 </Project>

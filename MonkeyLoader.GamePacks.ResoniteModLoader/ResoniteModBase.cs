@@ -1,9 +1,13 @@
+using HarmonyLib;
 using MonkeyLoader;
 using MonkeyLoader.Logging;
 using MonkeyLoader.Meta;
 using MonkeyLoader.Patching;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Zio;
+using Zio.FileSystems;
 
 namespace ResoniteModLoader
 {
@@ -14,6 +18,8 @@ namespace ResoniteModLoader
     {
         private static MonkeyLoader.MonkeyLoader _monkeyLoader = null!;
 
+        private readonly Lazy<string> _fullId;
+
         /// <inheritdoc/>
         public AssemblyName AssemblyName { get; }
 
@@ -22,11 +28,28 @@ namespace ResoniteModLoader
         /// </summary>
         public abstract string Author { get; }
 
+        public bool CanBeDisabled => false;
+
+        /// <inheritdoc/>
+        public override string Description => "ResoniteModLoader Mods don't have a description.";
+
+        public bool Enabled
+        { get => true; set { } }
+
         /// <inheritdoc/>
         public bool Failed { get; } = false;
 
         /// <inheritdoc/>
         public IEnumerable<IFeaturePatch> FeaturePatches => Enumerable.Empty<IFeaturePatch>();
+
+        public override IFileSystem FileSystem { get; } = new MemoryFileSystem()
+        {
+            Name = "ResoniteModLoader Mod FileSystem"
+        };
+
+        public string FullId { get; }
+
+        public Harmony Harmony { get; }
 
         /// <summary>
         /// Gets an optional hyperlink to the mod's homepage.
@@ -42,14 +65,19 @@ namespace ResoniteModLoader
         public abstract string Name { get; }
 
         /// <inheritdoc/>
+        public override Uri? ProjectUrl { get; }
+
+        /// <inheritdoc/>
         public bool Ran { get; } = false;
+
+        public Type Type { get; }
 
         /// <summary>
         /// Gets the mod's semantic version.
         /// </summary>
         public abstract string Version { get; }
 
-        internal new static MonkeyLogger Logger { get; private set; } = null!;
+        internal new static Logger Logger { get; private set; } = null!;
 
         internal static MonkeyLoader.MonkeyLoader MonkeyLoader
         {
@@ -64,6 +92,12 @@ namespace ResoniteModLoader
         protected ResoniteModBase() : base(MonkeyLoader, false)
         {
             monkeys.Add(this);
+            authors.Add(Author);
+            Loca
+            FullId = $"ResoniteModLoader.{Name}";
+
+            if (Uri.TryCreate(Link, UriKind.Absolute, out var projectUrl))
+                ProjectUrl = projectUrl;
         }
 
         /// <inheritdoc/>
@@ -86,6 +120,6 @@ namespace ResoniteModLoader
         /// <inheritdoc/>
         bool IRun.Run() => Run();
 
-        private protected abstract bool Run();
+        protected abstract bool Run();
     }
 }
