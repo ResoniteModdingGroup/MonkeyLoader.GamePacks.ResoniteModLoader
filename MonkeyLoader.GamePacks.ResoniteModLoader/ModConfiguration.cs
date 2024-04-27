@@ -3,13 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using FrooxEngine;
-
 using HarmonyLib;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
-using ResoniteModLoader.JsonConverters;
 
 namespace ResoniteModLoader
 {

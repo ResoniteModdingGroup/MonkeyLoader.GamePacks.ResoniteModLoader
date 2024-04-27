@@ -10,7 +10,7 @@ namespace ResoniteModLoader
     /// <summary>
     /// Contains members that only the <see cref="ModLoader"/> or the Mod itself are intended to access.
     /// </summary>
-    public abstract class ResoniteMod : ResoniteModBase
+    public abstract class ResoniteMod : ResoniteModBaseMonkey
     {
         /// <summary>
         /// Logs the given object as a line in the log if debug logging is enabled.
@@ -97,19 +97,8 @@ namespace ResoniteModLoader
         public virtual void OnEngineInit()
         { }
 
-        /// <summary>
-        /// Build the defined configuration for this mod.
-        /// </summary>
-        /// <returns>This mod's configuration definition.</returns>
-        internal ModConfigurationDefinition? BuildConfigurationDefinition()
-        {
-            ModConfigurationDefinitionBuilder builder = new(this);
-            builder.ProcessAttributes();
-            DefineConfiguration(builder);
-            return builder.Build();
-        }
-
-        private protected override bool Run()
+        /// <inheritdoc/>
+        public override bool Run()
         {
             try
             {
@@ -121,6 +110,18 @@ namespace ResoniteModLoader
                 Logger.Error(() => ex.Format($"Error while intitializing RML Mod {Name}:"));
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Build the defined configuration for this mod.
+        /// </summary>
+        /// <returns>This mod's configuration definition.</returns>
+        internal ModConfigurationDefinition? BuildConfigurationDefinition()
+        {
+            ModConfigurationDefinitionBuilder builder = new(this);
+            builder.ProcessAttributes();
+            DefineConfiguration(builder);
+            return builder.Build();
         }
 
         private static Func<object> Wrap(object message) => () => message;
