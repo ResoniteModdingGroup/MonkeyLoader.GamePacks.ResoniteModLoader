@@ -10,7 +10,7 @@ namespace ResoniteModLoader
     /// <summary>
     /// Contains members that only the <see cref="ModLoader"/> or the Mod itself are intended to access.
     /// </summary>
-    public abstract class ResoniteMod : ResoniteModBaseMonkey
+    public abstract class ResoniteMod : ResoniteModBase
     {
         /// <summary>
         /// Logs the given object as a line in the log if debug logging is enabled.
