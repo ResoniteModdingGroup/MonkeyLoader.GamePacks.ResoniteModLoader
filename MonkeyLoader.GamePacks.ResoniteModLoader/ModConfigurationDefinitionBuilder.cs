@@ -1,6 +1,7 @@
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace ResoniteModLoader
@@ -10,14 +11,15 @@ namespace ResoniteModLoader
     /// </summary>
     public class ModConfigurationDefinitionBuilder
     {
-        private readonly HashSet<ModConfigurationKey> Keys = new();
-        private readonly ResoniteModBase Owner;
-        private bool AutoSaveConfig = true;
-        private Version ConfigVersion = new(1, 0, 0);
+        private static readonly Type _modConfigKeyType = typeof(ModConfigurationKey);
+        private readonly HashSet<ModConfigurationKey> _keys = new();
+        private readonly ResoniteModBase _owner;
+        private bool _autoSaveConfig = true;
+        private Version _configVersion = new(1, 0, 0);
 
         internal ModConfigurationDefinitionBuilder(ResoniteModBase owner)
         {
-            Owner = owner;
+            _owner = owner;
         }
 
         /// <summary>
@@ -27,7 +29,8 @@ namespace ResoniteModLoader
         /// <returns>This builder.</returns>
         public ModConfigurationDefinitionBuilder AutoSave(bool autoSave)
         {
-            AutoSaveConfig = autoSave;
+            _autoSaveConfig = autoSave;
+
             return this;
         }
 
@@ -38,7 +41,8 @@ namespace ResoniteModLoader
         /// <returns>This builder.</returns>
         public ModConfigurationDefinitionBuilder Key(ModConfigurationKey key)
         {
-            Keys.Add(key);
+            _keys.Add(key);
+
             return this;
         }
 
@@ -49,7 +53,8 @@ namespace ResoniteModLoader
         /// <returns>This builder.</returns>
         public ModConfigurationDefinitionBuilder Version(Version version)
         {
-            ConfigVersion = version;
+            _configVersion = version;
+
             return this;
         }
 
@@ -60,38 +65,37 @@ namespace ResoniteModLoader
         /// <returns>This builder.</returns>
         public ModConfigurationDefinitionBuilder Version(string version)
         {
-            ConfigVersion = new Version(version);
+            _configVersion = new Version(version);
+
             return this;
         }
 
         internal ModConfigurationDefinition? Build()
         {
-            if (Keys.Count > 0)
-            {
-                return new ModConfigurationDefinition(Owner, ConfigVersion, Keys, AutoSaveConfig);
-            }
+            if (_keys.Count > 0)
+                return new ModConfigurationDefinition(_owner, _configVersion, _keys, _autoSaveConfig);
+
             return null;
         }
 
         internal void ProcessAttributes()
         {
-            var fields = AccessTools.GetDeclaredFields(Owner.GetType());
-            fields
-                .Where(field => Attribute.GetCustomAttribute(field, typeof(AutoRegisterConfigKeyAttribute)) != null)
+            AccessTools.GetDeclaredFields(_owner.GetType())
+                .Where(field => field.GetCustomAttribute<AutoRegisterConfigKeyAttribute>() is not null)
                 .Do(ProcessField);
         }
 
         private void ProcessField(FieldInfo field)
         {
-            if (!typeof(ModConfigurationKey).IsAssignableFrom(field.FieldType))
+            if (!_modConfigKeyType.IsAssignableFrom(field.FieldType))
             {
                 // wrong type
-                Logger.WarnInternal($"{Owner.Name} had an [AutoRegisterConfigKey] field of the wrong type: {field}");
+                _owner.Logger.Warn(() => $"{_owner.Name} had an [AutoRegisterConfigKey] field of the wrong type: {field}");
                 return;
             }
 
-            ModConfigurationKey fieldValue = (ModConfigurationKey)field.GetValue(field.IsStatic ? null : Owner);
-            Keys.Add(fieldValue);
+            var fieldValue = (ModConfigurationKey)field.GetValue(field.IsStatic ? null : _owner);
+            _keys.Add(fieldValue);
         }
     }
 }

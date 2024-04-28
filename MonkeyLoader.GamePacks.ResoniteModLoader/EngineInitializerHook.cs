@@ -1,6 +1,7 @@
 ﻿using FrooxEngine;
 using HarmonyLib;
 using MonkeyLoader;
+using MonkeyLoader.Configuration;
 using MonkeyLoader.Patching;
 using MonkeyLoader.Resonite.Features.FrooxEngine;
 using System;

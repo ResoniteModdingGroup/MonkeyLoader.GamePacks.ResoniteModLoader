@@ -105,6 +105,8 @@ namespace ResoniteModLoader
         /// </summary>
         public abstract string Version { get; }
 
+        protected abstract ModConfiguration? Configuration { get; }
+
         protected ResoniteModBase()
         {
             Type = GetType();
@@ -122,14 +124,7 @@ namespace ResoniteModLoader
         /// This will always be the same instance.
         /// </summary>
         /// <returns>This mod's current configuration.</returns>
-        public ModConfiguration? GetConfiguration()
-        {
-            if (!FinishedLoading)
-            {
-                throw new ModConfigurationException("GetConfiguration() was called before " + Name + " was done initializing. Consider calling GetConfiguration() from within OnEngineInit()");
-            }
-            return loadedResoniteMod?.ModConfiguration;
-        }
+        public ModConfiguration? GetConfiguration() => Configuration;
 
         /// <inheritdoc/>
         public abstract bool Run();

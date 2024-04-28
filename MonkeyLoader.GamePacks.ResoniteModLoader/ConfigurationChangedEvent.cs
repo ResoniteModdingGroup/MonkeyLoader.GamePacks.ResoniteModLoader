@@ -8,17 +8,17 @@ namespace ResoniteModLoader
         /// <summary>
         /// The <see cref="ModConfiguration"/> in which the change occured.
         /// </summary>
-        public ModConfiguration Config { get; private set; }
+        public ModConfiguration Config { get; }
 
         /// <summary>
         /// The specific <see cref="ModConfigurationKey{T}"/> who's value changed.
         /// </summary>
-        public ModConfigurationKey Key { get; private set; }
+        public ModConfigurationKey Key { get; }
 
         /// <summary>
         /// A custom label that may be set by whoever changed the configuration.
         /// </summary>
-        public string? Label { get; private set; }
+        public string? Label { get; }
 
         internal ConfigurationChangedEvent(ModConfiguration config, ModConfigurationKey key, string? label)
         {

@@ -12,17 +12,33 @@ namespace ResoniteModLoader
     /// </summary>
     public abstract class ResoniteMod : ResoniteModBase
     {
+        private readonly Lazy<ModConfiguration?> _configuration;
+
+        /// <inheritdoc/>
+        protected override ModConfiguration? Configuration => _configuration.Value;
+
+        protected ResoniteMod()
+        {
+            _configuration = new(() =>
+            {
+                if (BuildConfigurationDefinition() is ModConfigurationDefinition definition)
+                    return Config.LoadSection(new ModConfiguration(definition));
+
+                return null;
+            });
+        }
+
         /// <summary>
         /// Logs the given object as a line in the log if debug logging is enabled.
         /// </summary>
         /// <param name="message">The object to log.</param>
-        public static void Debug(object message) => Logger.Debug(() => message);
+        public static void Debug(object message) => EngineInitializerHook.Logger.Debug(() => message);
 
         /// <summary>
         /// Logs the given objects as lines in the log if debug logging is enabled.
         /// </summary>
         /// <param name="messages">The objects to log.</param>
-        public static void Debug(params object[] messages) => Logger.Debug(Wrap(messages));
+        public static void Debug(params object[] messages) => EngineInitializerHook.Logger.Debug(Wrap(messages));
 
         /// <summary>
         /// Logs an object as a line in the log based on the value produced by the given function if debug logging is enabled..
@@ -31,49 +47,49 @@ namespace ResoniteModLoader
         /// as it won't be generated if debug logging is disabled.
         /// </summary>
         /// <param name="messageProducer">The function generating the object to log.</param>
-        public static void DebugFunc(Func<object> messageProducer) => Logger.Debug(messageProducer);
+        public static void DebugFunc(Func<object> messageProducer) => EngineInitializerHook.Logger.Debug(messageProducer);
 
         /// <summary>
         /// Logs the given object as an error line in the log.
         /// </summary>
         /// <param name="message">The object to log.</param>
-        public static void Error(object message) => Logger.Error(Wrap(message));
+        public static void Error(object message) => EngineInitializerHook.Logger.Error(Wrap(message));
 
         /// <summary>
         /// Logs the given objects as error lines in the log.
         /// </summary>
         /// <param name="messages">The objects to log.</param>
-        public static void Error(params object[] messages) => Logger.Error(Wrap(messages));
+        public static void Error(params object[] messages) => EngineInitializerHook.Logger.Error(Wrap(messages));
 
         /// <summary>
         /// Gets whether debug logging is enabled.
         /// </summary>
         /// <returns><c>true</c> if debug logging is enabled.</returns>
-        public static bool IsDebugEnabled() => Logger.Level >= LoggingLevel.Debug;
+        public static bool IsDebugEnabled() => EngineInitializerHook.Logger.Level >= LoggingLevel.Debug;
 
         /// <summary>
         /// Logs the given object as a regular line in the log.
         /// </summary>
         /// <param name="message">The object to log.</param>
-        public static void Msg(object message) => Logger.Info(Wrap(message));
+        public static void Msg(object message) => EngineInitializerHook.Logger.Info(Wrap(message));
 
         /// <summary>
         /// Logs the given objects as regular lines in the log.
         /// </summary>
         /// <param name="messages">The objects to log.</param>
-        public static void Msg(params object[] messages) => Logger.Info(Wrap(messages));
+        public static void Msg(params object[] messages) => EngineInitializerHook.Logger.Info(Wrap(messages));
 
         /// <summary>
         /// Logs the given object as a warning line in the log.
         /// </summary>
         /// <param name="message">The object to log.</param>
-        public static void Warn(object message) => Logger.Warn(Wrap(message));
+        public static void Warn(object message) => EngineInitializerHook.Logger.Warn(Wrap(message));
 
         /// <summary>
         /// Logs the given objects as warning lines in the log.
         /// </summary>
         /// <param name="messages">The objects to log.</param>
-        public static void Warn(params object[] messages) => Logger.Warn(Wrap(messages));
+        public static void Warn(params object[] messages) => EngineInitializerHook.Logger.Warn(Wrap(messages));
 
         /// <summary>
         /// Define this mod's configuration via a builder

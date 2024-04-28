@@ -1,3 +1,4 @@
+using MonkeyLoader.Configuration;
 using System;
 using System.Collections.Generic;
 
@@ -11,30 +12,25 @@ namespace ResoniteModLoader
         /// <summary>
         /// Gets the human-readable description of this config item. Should be specified by the defining mod.
         /// </summary>
-        public string? Description { get; private set; }
+        public string? Description => DescriptionProxy;
 
         /// <summary>
         /// Gets whether only the owning mod should have access to this config item.
         /// </summary>
-        public bool InternalAccessOnly { get; private set; }
+        public bool InternalAccessOnly => InternalAccessOnlyProxy;
 
         /// <summary>
         /// Gets the mod-unique name of this config item. Must be present.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name => NameProxy;
 
-        internal ModConfigurationKey(string name, string? description, bool internalAccessOnly)
-        {
-            Name = name ?? throw new ArgumentNullException("Configuration key name must not be null");
-            Description = description;
-            InternalAccessOnly = internalAccessOnly;
-        }
+        internal abstract IDefiningConfigKey UntypedKey { get; }
+        protected abstract string? DescriptionProxy { get; }
+        protected abstract bool InternalAccessOnlyProxy { get; }
+        protected abstract string NameProxy { get; }
 
-        /// <summary>
-        /// Delegate for handling configuration changes.
-        /// </summary>
-        /// <param name="configKey">The key of the <see cref="ModConfigurationKey"/> that changed.</param>
-        /// <param name="newValue">The new value of the <see cref="ModConfigurationKey"/>.</param>
+        internal ModConfigurationKey()
+        { }
 
         /// <summary>
         /// We only care about key name for non-defining keys.<br/>
@@ -42,17 +38,10 @@ namespace ResoniteModLoader
         /// </summary>
         /// <param name="obj">The other object to compare against.</param>
         /// <returns><c>true</c> if the other object is equal to this.</returns>
-        public override bool Equals(object obj)
-        {
-            return obj is ModConfigurationKey key &&
-                   Name == key.Name;
-        }
+        public abstract override bool Equals(object obj);
 
         /// <inheritdoc/>
-        public override int GetHashCode()
-        {
-            return 539060726 + EqualityComparer<string>.Default.GetHashCode(Name);
-        }
+        public abstract override int GetHashCode();
 
         /// <summary>
         /// Tries to compute the default value for this key, if a default provider was set.
@@ -79,6 +68,10 @@ namespace ResoniteModLoader
         /// </summary>
         public event OnChangedHandler? OnChanged;
 
+        /// <summary>
+        /// Delegate for handling configuration changes.
+        /// </summary>
+        /// <param name="newValue">The new value of the <see cref="ModConfigurationKey"/>.</param>
         public delegate void OnChangedHandler(object? newValue);
     }
 
@@ -88,9 +81,18 @@ namespace ResoniteModLoader
     /// <typeparam name="T">The type of this key's value.</typeparam>
     public class ModConfigurationKey<T> : ModConfigurationKey
     {
-        private readonly Func<T>? ComputeDefault;
+        public DefiningConfigKey<T> Key { get; }
 
-        private readonly Predicate<T?>? IsValueValid;
+        internal override IDefiningConfigKey UntypedKey => Key;
+
+        /// <inheritdoc/>
+        protected override string? DescriptionProxy => Key.Description;
+
+        /// <inheritdoc/>
+        protected override bool InternalAccessOnlyProxy => Key.InternalAccessOnly;
+
+        /// <inheritdoc/>
+        protected override string NameProxy => Key.Id;
 
         /// <summary>
         /// Creates a new instance of the <see cref="ModConfigurationKey{T}"/> class with the given parameters.
@@ -100,26 +102,21 @@ namespace ResoniteModLoader
         /// <param name="computeDefault">The function that computes a default value for this key. Otherwise <c>default(<typeparamref name="T"/>)</c> will be used.</param>
         /// <param name="internalAccessOnly">If <c>true</c>, only the owning mod should have access to this config item.</param>
         /// <param name="valueValidator">The function that checks if the given value is valid for this configuration item. Otherwise everything will be accepted.</param>
-        public ModConfigurationKey(string name, string? description = null, Func<T>? computeDefault = null, bool internalAccessOnly = false, Predicate<T?>? valueValidator = null) : base(name, description, internalAccessOnly)
+        public ModConfigurationKey(string name, string? description = null, Func<T>? computeDefault = null, bool internalAccessOnly = false, Predicate<T?>? valueValidator = null)
         {
-            ComputeDefault = computeDefault;
-            IsValueValid = valueValidator;
+            Key = new(name, description, computeDefault, internalAccessOnly, valueValidator);
         }
 
         /// <inheritdoc/>
+        public override bool Equals(object obj)
+            => obj is ModConfigurationKey<T> other && Key.Equals(other.Key);
+
+        /// <inheritdoc/>
+        public override int GetHashCode() => Key.GetHashCode();
+
+        /// <inheritdoc/>
         public override bool TryComputeDefault(out object? defaultValue)
-        {
-            if (TryComputeDefaultTyped(out T? defaultTypedValue))
-            {
-                defaultValue = defaultTypedValue;
-                return true;
-            }
-            else
-            {
-                defaultValue = null;
-                return false;
-            }
-        }
+            => ((IDefiningConfigKey)Key).TryComputeDefault(out defaultValue);
 
         /// <summary>
         /// Tries to compute the default value for this key, if a default provider was set.
@@ -127,46 +124,11 @@ namespace ResoniteModLoader
         /// <param name="defaultValue">The computed default value if the return value is <c>true</c>. Otherwise <c>default(T)</c>.</param>
         /// <returns><c>true</c> if the default value was successfully computed.</returns>
         public bool TryComputeDefaultTyped(out T? defaultValue)
-        {
-            if (ComputeDefault == null)
-            {
-                defaultValue = default;
-                return false;
-            }
-            else
-            {
-                defaultValue = ComputeDefault();
-                return true;
-            }
-        }
+            => Key.TryComputeDefault(out defaultValue);
 
         /// <inheritdoc/>
         public override bool Validate(object? value)
-        {
-            if (value is T typedValue)
-            {
-                // value is of the correct type
-                return ValidateTyped(typedValue);
-            }
-            else if (value == null)
-            {
-                if (Util.CanBeNull(ValueType()))
-                {
-                    // null is valid for T
-                    return ValidateTyped((T?)value);
-                }
-                else
-                {
-                    // null is not valid for T
-                    return false;
-                }
-            }
-            else
-            {
-                // value is of the wrong type
-                return false;
-            }
-        }
+            => ((IDefiningConfigKey)Key).Validate(value);
 
         /// <summary>
         /// Checks if a value is valid for this configuration item.
@@ -174,18 +136,9 @@ namespace ResoniteModLoader
         /// <param name="value">The value to check.</param>
         /// <returns><c>true</c> if the value is valid.</returns>
         public bool ValidateTyped(T? value)
-        {
-            if (IsValueValid == null)
-            {
-                return true;
-            }
-            else
-            {
-                return IsValueValid(value);
-            }
-        }
+            => Key.Validate(value!);
 
         /// <inheritdoc/>
-        public override Type ValueType() => typeof(T);
+        public override Type ValueType() => Key.ValueType;
     }
 }
