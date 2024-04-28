@@ -12,6 +12,11 @@ they are integrated into the MonkeyLoader Settings Category inside Resonite as w
 The settings files will be created under `./MonkeyLoader/Configs` however,
 so any customized settings will have to recreated or manually copied into the json file.
 
+## Installation
+
+1. Download `MonkeyLoader-v...+Resonite-v....zip` [from the latest Resonite gamepack release](https://github.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.Resonite/releases/latest)
+2. Extract the zip into Resonite's install folder (`C:\Program Files (x86)\Steam\steamapps\common\Resonite`)
+3. Download `MonkeyLoader.GamePacks.ResoniteModLoader.nupkg` gamepack from it's [latest release](https://github.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.ResoniteModLoader/releases/latest) to `MonkeyLoader/GamePacks`
 
 ## Settings Integration
 
