@@ -20,7 +20,7 @@
       <PackageProjectUrl>https://github.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.ResoniteModLoader</PackageProjectUrl>
       <RepositoryUrl>https://github.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.ResoniteModLoader.git</RepositoryUrl>
       <PackageIconUrl>https://avatars.githubusercontent.com/u/145755526</PackageIconUrl>
-      <PackageIcon>Icon.png</PackageIcon>
+      <PackageIcon>/Icon.png</PackageIcon>
       <RepositoryType>git</RepositoryType>
       <PackageTags>mod; mods; modding; mod; loader; monkeyloader; resonite; integration; rml; resonitemodloader</PackageTags>
       <IncludeSymbols>False</IncludeSymbols>
