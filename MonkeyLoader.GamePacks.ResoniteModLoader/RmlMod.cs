@@ -58,14 +58,16 @@ namespace ResoniteModLoader
             var modType = assembly.GetTypes().Single(_resoniteModType.IsAssignableFrom);
             var resoniteMod = (ResoniteMod)Activator.CreateInstance(modType);
 
-            if (Uri.TryCreate(resoniteMod.Link, UriKind.Absolute, out var projectUrl))
-                ProjectUrl = projectUrl;
-
             NuGetVersion version;
             if (!NuGetVersion.TryParse(resoniteMod.Version, out version!))
                 version = new(1, 0, 0);
 
-            Identity = new PackageIdentity(resoniteMod.Id, version);
+            Identity = new PackageIdentity(resoniteMod.AssemblyName, version);
+
+            resoniteMod.Mod = this;
+
+            if (Uri.TryCreate(resoniteMod.Link, UriKind.Absolute, out var projectUrl))
+                ProjectUrl = projectUrl;
 
             authors.Add(resoniteMod.Author);
             monkeys.Add(resoniteMod);

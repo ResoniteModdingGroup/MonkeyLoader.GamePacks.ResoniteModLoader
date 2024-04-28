@@ -59,7 +59,7 @@ namespace ResoniteModLoader
         public virtual string? Link { get; }
 
         /// <inheritdoc/>
-        public Logger Logger { get; private set; }
+        public Logger Logger => _mod.Logger;
 
         /// <inheritdoc/>
         public Mod Mod
@@ -79,7 +79,6 @@ namespace ResoniteModLoader
                     throw new InvalidOperationException("Can't assign a different mod to a monkey!");
 
                 _mod = value;
-                Logger = new Logger(_mod.Logger, Name);
             }
         }
 

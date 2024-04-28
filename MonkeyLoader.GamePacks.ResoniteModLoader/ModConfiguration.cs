@@ -85,6 +85,12 @@ namespace ResoniteModLoader
         internal ModConfiguration(ModConfigurationDefinition definition)
         {
             _definition = definition;
+
+            foreach (var item in _definition.ConfigurationItemDefinitions)
+            {
+                keys.Add(item.UntypedKey);
+                item.UntypedKey.Section = this;
+            }
         }
 
         /// <summary>
@@ -197,10 +203,6 @@ namespace ResoniteModLoader
         /// <returns><c>true</c> if a value was successfully found and removed, <c>false</c> if there was no value to remove.</returns>
         /// <exception cref="KeyNotFoundException">The given key does not exist in the configuration.</exception>
         public bool Unset(ModConfigurationKey key) => GetDefinedKey(key.UntypedKey).Unset();
-
-        /// <inheritdoc/>
-        protected override IEnumerable<IDefiningConfigKey> GetConfigKeys()
-            => _definition.ConfigurationItemDefinitions.Select(item => item.UntypedKey);
 
         private void FireConfigurationChangedEvent(ModConfigurationKey key, string? label)
         {
