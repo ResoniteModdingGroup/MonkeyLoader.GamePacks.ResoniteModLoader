@@ -20,10 +20,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  publish-docs:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  ci:
     runs-on: ubuntu-latest
     steps:
     # Setup environment
