@@ -30,9 +30,12 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.x
-        source-url: https://nuget.pkg.github.com/MonkeyModdingTroop/index.json
+        source-url: https://nuget.pkg.github.com/ResoniteModdingGroup/index.json
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+    - name: Add MonkeyLoader NuGet source
+      run: dotnet nuget add source https://pkg.munally.com/MonkeyModdingTroop/index.json
       
     # Cache NuGet packages
     - uses: actions/cache@v3
