@@ -17,6 +17,7 @@ so any customized settings will have to recreated or manually copied into the js
 1. Download `MonkeyLoader-v...+Resonite-v....zip` [from the latest Resonite gamepack release](https://github.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.Resonite/releases/latest)
 2. Extract the zip into Resonite's install folder (`C:\Program Files (x86)\Steam\steamapps\common\Resonite`)
 3. Download `MonkeyLoader.GamePacks.ResoniteModLoader.nupkg` gamepack from it's [latest release](https://github.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.ResoniteModLoader/releases/latest) to `MonkeyLoader/GamePacks`
+4. Remove RML's library launch option from Steam if you had set it up previously
 
 ## Settings Integration
 
