@@ -3,6 +3,7 @@ using HarmonyLib;
 using MonkeyLoader;
 using MonkeyLoader.Meta;
 using MonkeyLoader.Patching;
+using MonkeyLoader.Resonite;
 using MonkeyLoader.Resonite.Features.FrooxEngine;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ResoniteModLoader
 {
@@ -18,7 +20,7 @@ namespace ResoniteModLoader
     /// </summary>
     [HarmonyPatchCategory(nameof(ModLoader))]
     [HarmonyPatch(typeof(EngineInitializer), nameof(EngineInitializer.InitializeFrooxEngine))]
-    public sealed class ModLoader : Monkey<ModLoader>
+    public sealed class ModLoader : ResoniteMonkey<ModLoader>
     {
         /// <summary>
         /// ResoniteModLoader's version
@@ -35,7 +37,7 @@ namespace ResoniteModLoader
         public static bool IsHeadless => _isHeadless.Value;
 
         /// <inheritdoc/>
-        public override string Name { get; } = "ResoniteModLoader";
+        public override string Name { get; } = "ModLoader";
 
         /// <summary>
         /// Allows reading metadata for all loaded mods
@@ -55,6 +57,20 @@ namespace ResoniteModLoader
             yield return new FeaturePatch<EngineInitialization>(PatchCompatibility.HookOnly);
         }
 
+        /// <inheritdoc/>
+        protected override bool OnEngineInit()
+        {
+            LoadProgressReporter.AddFixedPhases(1);
+
+            return base.OnEngineInit();
+        }
+
+        /// <inheritdoc/>
+        protected override bool OnEngineReady() => true;
+
+        /// <inheritdoc/>
+        protected override bool OnLoaded() => base.OnEngineReady();
+
         private static IEnumerable<string> GetAssemblyPaths(string root)
         {
             if (!Directory.Exists(root))
@@ -68,15 +84,19 @@ namespace ResoniteModLoader
         }
 
         [HarmonyPostfix]
-        private static void InitializeFrooxEnginePostfix()
+        private static async Task InitializeFrooxEnginePostfix(Task __result)
         {
+            await __result;
+
+            LoadProgressReporter.AdvanceFixedPhase("Loading RML Mods...");
+
             try
             {
                 foreach (var file in GetAssemblyPaths("rml_libs"))
                 {
                     try
                     {
-                        var assembly = Assembly.LoadFrom(file);
+                        var assembly = await Task.Run(() => Assembly.LoadFrom(file));
                         Logger.Info(() => $"Loaded library from rml_libs: {file}");
                     }
                     catch (Exception ex)
@@ -85,11 +105,11 @@ namespace ResoniteModLoader
                     }
                 }
 
-                var rmlMods = LoadMods().ToArray();
+                var rmlMods = await Task.Run(() => LoadMods().ToArray());
                 foreach (var rmlMod in rmlMods)
                     Mod.Loader.AddMod(rmlMod);
 
-                Mod.Loader.RunMods(rmlMods);
+                await Task.Run(() => Mod.Loader.RunMods(rmlMods));
             }
             catch (Exception ex)
             {

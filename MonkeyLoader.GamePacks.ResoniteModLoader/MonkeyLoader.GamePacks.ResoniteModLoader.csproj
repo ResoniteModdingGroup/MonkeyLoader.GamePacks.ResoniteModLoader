@@ -11,7 +11,7 @@
     <PropertyGroup>
       <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
       <PackageId>MonkeyLoader.GamePacks.ResoniteModLoader</PackageId>
-      <Title>Resonite Mod Loader</Title>
+      <Title>ResoniteModLoader</Title>
       <Authors>Banane9</Authors>
       <Version>2.6.0</Version>
       <Description>This MonkeyLoader Game Pack for Resonite enables loading ResoniteModLoader mods as MonkeyLoader mods.</Description>
