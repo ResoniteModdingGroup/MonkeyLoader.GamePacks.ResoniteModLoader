@@ -84,7 +84,7 @@ namespace ResoniteModLoader
         }
 
         [HarmonyPostfix]
-        private static async Task InitializeFrooxEnginePostfix(Task __result)
+        private static async Task InitializeFrooxEnginePostfixAsync(Task __result)
         {
             await __result;
 

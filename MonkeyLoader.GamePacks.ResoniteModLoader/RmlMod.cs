@@ -71,6 +71,10 @@ namespace ResoniteModLoader
 
             authors.Add(resoniteMod.Author);
             monkeys.Add(resoniteMod);
+
+            // Add dependencies after refactoring MKL
+            //foreach (var referencedAssembly in assembly.GetReferencedAssemblies())
+            //    dependencies.Add(referencedAssembly.Name, new DependencyReference())
         }
 
         protected override bool OnLoadEarlyMonkeys() => true;

@@ -1,3 +1,4 @@
+using MonkeyLoader;
 using MonkeyLoader.Configuration;
 using System;
 using System.Collections.Generic;
@@ -81,6 +82,8 @@ namespace ResoniteModLoader
     /// <typeparam name="T">The type of this key's value.</typeparam>
     public class ModConfigurationKey<T> : ModConfigurationKey
     {
+        private static int _replacementCounter = 0;
+
         public DefiningConfigKey<T> Key { get; }
 
         internal override IDefiningConfigKey UntypedKey => Key;
@@ -104,7 +107,17 @@ namespace ResoniteModLoader
         /// <param name="valueValidator">The function that checks if the given value is valid for this configuration item. Otherwise everything will be accepted.</param>
         public ModConfigurationKey(string name, string? description = null, Func<T>? computeDefault = null, bool internalAccessOnly = false, Predicate<T?>? valueValidator = null)
         {
-            Key = new(name, description, computeDefault, internalAccessOnly, valueValidator);
+            try
+            {
+                Key = new(name, description, computeDefault, internalAccessOnly, valueValidator);
+            }
+            catch (ArgumentNullException ex)
+            {
+                ModLoader.Logger.Error(() => ex.Format($"Failed to create the nested DefiningConfigKey for key [{name}] with description [{description}]"));
+
+                Key = new($"Replacement-{name?.GetHashCode() ?? description?.GetHashCode() ?? _replacementCounter++}",
+                    description, computeDefault, internalAccessOnly, valueValidator);
+            }
         }
 
         /// <inheritdoc/>
