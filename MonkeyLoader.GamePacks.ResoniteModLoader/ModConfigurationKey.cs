@@ -107,17 +107,17 @@ namespace ResoniteModLoader
         /// <param name="valueValidator">The function that checks if the given value is valid for this configuration item. Otherwise everything will be accepted.</param>
         public ModConfigurationKey(string name, string? description = null, Func<T>? computeDefault = null, bool internalAccessOnly = false, Predicate<T?>? valueValidator = null)
         {
-            try
+            if (string.IsNullOrWhiteSpace(name))
             {
-                Key = new(name, description, computeDefault, internalAccessOnly, valueValidator);
-            }
-            catch (ArgumentNullException ex)
-            {
-                ModLoader.Logger.Error(() => ex.Format($"Failed to create the nested DefiningConfigKey for key [{name}] with description [{description}]"));
+                ModLoader.Logger.Error(() => $"ModConfigurationKey with description [{description}] has null or whitespace name - using Spacer name!");
 
-                Key = new($"Replacement-{name?.GetHashCode() ?? description?.GetHashCode() ?? _replacementCounter++}",
+                Key = new($"Spacer-{name?.GetHashCode() ?? description?.GetHashCode() ?? _replacementCounter++}",
                     description, computeDefault, internalAccessOnly, valueValidator);
+
+                return;
             }
+
+            Key = new(name, description, computeDefault, internalAccessOnly, valueValidator);
         }
 
         /// <inheritdoc/>

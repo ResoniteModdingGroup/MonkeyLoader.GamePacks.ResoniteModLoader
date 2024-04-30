@@ -13,13 +13,13 @@
       <PackageId>MonkeyLoader.GamePacks.ResoniteModLoader</PackageId>
       <Title>ResoniteModLoader</Title>
       <Authors>Banane9</Authors>
-      <Version>2.6.1</Version>
+      <Version>2.6.2</Version>
       <Description>This MonkeyLoader Game Pack for Resonite enables loading ResoniteModLoader mods as MonkeyLoader mods.</Description>
       <PackageReadmeFile>README.md</PackageReadmeFile>
       <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
       <PackageProjectUrl>https://github.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.ResoniteModLoader</PackageProjectUrl>
       <RepositoryUrl>https://github.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.ResoniteModLoader.git</RepositoryUrl>
-      <PackageIconUrl>https://avatars.githubusercontent.com/u/145755526</PackageIconUrl>
+      <PackageIconUrl>https://raw.githubusercontent.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.ResoniteModLoader/master/Icon.png</PackageIconUrl>
       <PackageIcon>/Icon.png</PackageIcon>
       <RepositoryType>git</RepositoryType>
       <PackageTags>mod; mods; modding; mod; loader; monkeyloader; resonite; integration; rml; resonitemodloader</PackageTags>
