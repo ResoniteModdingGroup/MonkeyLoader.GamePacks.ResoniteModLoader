@@ -13,7 +13,7 @@
       <PackageId>MonkeyLoader.GamePacks.ResoniteModLoader</PackageId>
       <Title>ResoniteModLoader</Title>
       <Authors>Banane9</Authors>
-      <Version>2.6.2</Version>
+      <Version>2.6.3</Version>
       <Description>This MonkeyLoader Game Pack for Resonite enables loading ResoniteModLoader mods as MonkeyLoader mods.</Description>
       <PackageReadmeFile>README.md</PackageReadmeFile>
       <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
