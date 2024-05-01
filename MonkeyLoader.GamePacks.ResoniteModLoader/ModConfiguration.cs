@@ -144,7 +144,7 @@ namespace ResoniteModLoader
             definingKey.SetValue(value, eventLabel);
 
             modConfigKey.FireOnChanged(value);
-            FireConfigurationChangedEvent(key, eventLabel);
+            FireConfigurationChangedEvent(modConfigKey, eventLabel);
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace ResoniteModLoader
             definingKey.SetValue(value, eventLabel);
 
             modConfigKey.FireOnChanged(value);
-            FireConfigurationChangedEvent(key, eventLabel);
+            FireConfigurationChangedEvent(modConfigKey, eventLabel);
         }
 
         /// <summary>
@@ -216,7 +216,9 @@ namespace ResoniteModLoader
             var modConfigKey = _definition.ConfigurationItems.First(modKey => ReferenceEquals(modKey.UntypedKey, definingKey));
 
             var success = definingKey.Unset();
+
             modConfigKey.FireOnChanged();
+            FireConfigurationChangedEvent(modConfigKey, "Unset"); // Not in RML
 
             return success;
         }
