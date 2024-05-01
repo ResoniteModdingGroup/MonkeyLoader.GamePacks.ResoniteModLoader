@@ -64,6 +64,18 @@ namespace ResoniteModLoader
         /// <returns>The <see cref="Type"/> of this key's value.</returns>
         public abstract Type ValueType();
 
+        internal void FireOnChanged(object? newValue = null)
+        {
+            try
+            {
+                OnChanged?.TryInvokeAll(newValue!);
+            }
+            catch (AggregateException ex)
+            {
+                UntypedKey.Config.Logger.Error(() => ex.Format($"Some On Changed event handlers for key [{Name}] threw an exception:"));
+            }
+        }
+
         /// <summary>
         /// Called if this <see cref="ModConfigurationKey"/> changed.
         /// </summary>

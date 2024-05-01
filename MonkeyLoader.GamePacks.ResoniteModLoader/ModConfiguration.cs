@@ -138,8 +138,12 @@ namespace ResoniteModLoader
         /// <exception cref="ArgumentException">The new value is not valid for the given key.</exception>
         public void Set(ModConfigurationKey key, object? value, string? eventLabel = null)
         {
-            GetDefinedKey(key.UntypedKey).SetValue(value, eventLabel);
+            var definingKey = GetDefinedKey(key.UntypedKey);
+            var modConfigKey = _definition.ConfigurationItems.First(modKey => ReferenceEquals(modKey.UntypedKey, definingKey));
 
+            definingKey.SetValue(value, eventLabel);
+
+            modConfigKey.FireOnChanged(value);
             FireConfigurationChangedEvent(key, eventLabel);
         }
 
@@ -155,8 +159,12 @@ namespace ResoniteModLoader
         /// <exception cref="ArgumentException">The new value is not valid for the given key.</exception>
         public void Set<T>(ModConfigurationKey<T> key, T value, string? eventLabel = null)
         {
-            GetDefinedKey(key.Key).SetValue(value, eventLabel);
+            var definingKey = GetDefinedKey(key.Key);
+            var modConfigKey = _definition.ConfigurationItems.First(modKey => ReferenceEquals(modKey.UntypedKey, definingKey));
 
+            definingKey.SetValue(value, eventLabel);
+
+            modConfigKey.FireOnChanged(value);
             FireConfigurationChangedEvent(key, eventLabel);
         }
 
@@ -202,7 +210,16 @@ namespace ResoniteModLoader
         /// <param name="key">The key to remove the value for.</param>
         /// <returns><c>true</c> if a value was successfully found and removed, <c>false</c> if there was no value to remove.</returns>
         /// <exception cref="KeyNotFoundException">The given key does not exist in the configuration.</exception>
-        public bool Unset(ModConfigurationKey key) => GetDefinedKey(key.UntypedKey).Unset();
+        public bool Unset(ModConfigurationKey key)
+        {
+            var definingKey = GetDefinedKey(key.UntypedKey);
+            var modConfigKey = _definition.ConfigurationItems.First(modKey => ReferenceEquals(modKey.UntypedKey, definingKey));
+
+            var success = definingKey.Unset();
+            modConfigKey.FireOnChanged();
+
+            return success;
+        }
 
         private void FireConfigurationChangedEvent(ModConfigurationKey key, string? label)
         {
@@ -249,16 +266,14 @@ namespace ResoniteModLoader
     /// </summary>
     public class ModConfigurationDefinition : IModConfigurationDefinition
     {
+        internal readonly HashSet<ModConfigurationKey> ConfigurationItems;
         internal bool AutoSave;
-
-        // this is a ridiculous hack because HashSet.TryGetValue doesn't exist in .NET 4.6.2
-        private readonly Dictionary<ModConfigurationKey, ModConfigurationKey> _configurationItemDefinitionsSelfMap;
 
         /// <inheritdoc/>
         public ISet<ModConfigurationKey> ConfigurationItemDefinitions
         {
             // clone the collection because I don't trust giving public API users shallow copies one bit
-            get => new HashSet<ModConfigurationKey>(_configurationItemDefinitionsSelfMap.Keys);
+            get => new HashSet<ModConfigurationKey>(ConfigurationItems);
         }
 
         /// <inheritdoc/>
@@ -271,7 +286,7 @@ namespace ResoniteModLoader
         {
             Owner = owner;
             Version = configVersion;
-            _configurationItemDefinitionsSelfMap = keys.ToDictionary(item => item);
+            ConfigurationItems = new(keys);
             AutoSave = autoSaveConfig;
         }
     }
