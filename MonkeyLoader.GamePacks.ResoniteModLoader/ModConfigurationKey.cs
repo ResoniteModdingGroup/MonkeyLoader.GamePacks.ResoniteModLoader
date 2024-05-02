@@ -109,6 +109,8 @@ namespace ResoniteModLoader
         /// <inheritdoc/>
         protected override string NameProxy => Key.Id;
 
+        private ModConfiguration ModConfiguration => (ModConfiguration)Key.Section;
+
         /// <summary>
         /// Creates a new instance of the <see cref="ModConfigurationKey{T}"/> class with the given parameters.
         /// </summary>
@@ -130,6 +132,8 @@ namespace ResoniteModLoader
             }
 
             Key = new(name, description, computeDefault, internalAccessOnly, valueValidator);
+
+            Key.Changed += OnKeyChanged;
         }
 
         /// <inheritdoc/>
@@ -165,5 +169,11 @@ namespace ResoniteModLoader
 
         /// <inheritdoc/>
         public override Type ValueType() => Key.ValueType;
+
+        private void OnKeyChanged(object sender, ConfigKeyChangedEventArgs<T> configKeyChangedEventArgs)
+        {
+            FireOnChanged(configKeyChangedEventArgs.NewValue);
+            ModConfiguration.FireConfigurationChangedEvent(this, configKeyChangedEventArgs.Label);
+        }
     }
 }

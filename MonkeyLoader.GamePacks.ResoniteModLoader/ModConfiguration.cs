@@ -85,12 +85,6 @@ namespace ResoniteModLoader
         internal ModConfiguration(ModConfigurationDefinition definition)
         {
             _definition = definition;
-
-            foreach (var item in _definition.ConfigurationItemDefinitions)
-            {
-                keys.Add(item.UntypedKey);
-                item.UntypedKey.Section = this;
-            }
         }
 
         /// <summary>
@@ -137,15 +131,7 @@ namespace ResoniteModLoader
         /// <exception cref="KeyNotFoundException">The given key does not exist in the configuration.</exception>
         /// <exception cref="ArgumentException">The new value is not valid for the given key.</exception>
         public void Set(ModConfigurationKey key, object? value, string? eventLabel = null)
-        {
-            var definingKey = GetDefinedKey(key.UntypedKey);
-            var modConfigKey = _definition.ConfigurationItems.First(modKey => ReferenceEquals(modKey.UntypedKey, definingKey));
-
-            definingKey.SetValue(value, eventLabel);
-
-            modConfigKey.FireOnChanged(value);
-            FireConfigurationChangedEvent(modConfigKey, eventLabel);
-        }
+            => GetDefinedKey(key.UntypedKey).SetValue(value, eventLabel);
 
         /// <summary>
         /// Sets a configuration value for the given key, throwing a <see cref="KeyNotFoundException"/> if the key is not found
@@ -158,15 +144,7 @@ namespace ResoniteModLoader
         /// <exception cref="KeyNotFoundException">The given key does not exist in the configuration.</exception>
         /// <exception cref="ArgumentException">The new value is not valid for the given key.</exception>
         public void Set<T>(ModConfigurationKey<T> key, T value, string? eventLabel = null)
-        {
-            var definingKey = GetDefinedKey(key.Key);
-            var modConfigKey = _definition.ConfigurationItems.First(modKey => ReferenceEquals(modKey.UntypedKey, definingKey));
-
-            definingKey.SetValue(value, eventLabel);
-
-            modConfigKey.FireOnChanged(value);
-            FireConfigurationChangedEvent(modConfigKey, eventLabel);
-        }
+            => GetDefinedKey(key.Key).SetValue(value, eventLabel);
 
         /// <summary>
         /// Tries to get a value, returning <c>default</c> if the key is not found.
@@ -210,20 +188,9 @@ namespace ResoniteModLoader
         /// <param name="key">The key to remove the value for.</param>
         /// <returns><c>true</c> if a value was successfully found and removed, <c>false</c> if there was no value to remove.</returns>
         /// <exception cref="KeyNotFoundException">The given key does not exist in the configuration.</exception>
-        public bool Unset(ModConfigurationKey key)
-        {
-            var definingKey = GetDefinedKey(key.UntypedKey);
-            var modConfigKey = _definition.ConfigurationItems.First(modKey => ReferenceEquals(modKey.UntypedKey, definingKey));
+        public bool Unset(ModConfigurationKey key) => GetDefinedKey(key.UntypedKey).Unset();
 
-            var success = definingKey.Unset();
-
-            modConfigKey.FireOnChanged();
-            FireConfigurationChangedEvent(modConfigKey, "Unset"); // Not in RML
-
-            return success;
-        }
-
-        private void FireConfigurationChangedEvent(ModConfigurationKey key, string? label)
+        internal void FireConfigurationChangedEvent(ModConfigurationKey key, string? label)
         {
             var eventData = new ConfigurationChangedEvent(this, key, label);
 
@@ -245,6 +212,10 @@ namespace ResoniteModLoader
                 Config.Logger.Error(() => ex.Format($"An OnThisConfigurationChanged event subscriber threw an exception:"));
             }
         }
+
+        /// <inheritdoc/>
+        protected override IEnumerable<IDefiningConfigKey> GetConfigKeys()
+            => _definition.ConfigurationItemDefinitions.Select(item => item.UntypedKey);
 
         /// <summary>
         /// Called if any config value for any mod changed.
