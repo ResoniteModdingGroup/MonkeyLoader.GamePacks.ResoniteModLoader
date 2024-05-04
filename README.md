@@ -36,7 +36,9 @@ The short summary of it is:
 
 1. [Setup a private nuget feed](https://github.com/MonkeyModdingTroop/ReferencePackageGenerator).
 2. [Generate the game's reference assemblies](https://github.com/MonkeyModdingTroop/ReferencePackageGenerator).
-3. Run `dotnet build`, or build with your IDE of preference.
+3. Add the nuget feeds (`nuget sources Add -Name ... -Source ...`, local and either <https://pkg.munally.com/MonkeyModdingTroop/index.json> & <https://pkg.munally.com/ResoniteModdingGroup/index.json>)
+4. Run `dotnet build`, or build with your IDE of preference.
 
 The long version is that you'll probably want to set it up privately on GitHub nuget packages.
 Though this isn't legal advice and you should check that [Resonite's TOS](https://resonite.com/policies/TermsOfService.html) allows it.
+The feeds can also be directly used from GitHub, though that requires authentication using a PAT.
