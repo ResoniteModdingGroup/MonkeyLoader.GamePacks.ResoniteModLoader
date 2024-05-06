@@ -65,7 +65,7 @@ namespace ResoniteModLoader
         /// Gets whether debug logging is enabled.
         /// </summary>
         /// <returns><c>true</c> if debug logging is enabled.</returns>
-        public static bool IsDebugEnabled() => ModLoader.Logger.Level >= LoggingLevel.Debug;
+        public static bool IsDebugEnabled() => Util.GetLoggerFromStackTrace(new(1)).Level >= LoggingLevel.Debug;
 
         /// <summary>
         /// Logs the given object as a regular line in the log.
