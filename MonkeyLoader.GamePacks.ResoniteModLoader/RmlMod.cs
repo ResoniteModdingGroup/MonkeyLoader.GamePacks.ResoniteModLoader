@@ -24,6 +24,11 @@ namespace ResoniteModLoader
         ///<inheritdoc/>
         public override string Description => "RML Mods don't have descriptions.";
 
+        /// <summary>
+        /// Map of Assembly to ResoniteMod, used for logging purposes
+        /// </summary>
+        internal static readonly Dictionary<Assembly, ResoniteMod> AssemblyLookupMap = new();
+
         ///<inheritdoc/>
         public override IFileSystem FileSystem { get; }
 
@@ -57,6 +62,8 @@ namespace ResoniteModLoader
             var assembly = Assembly.LoadFile(location);
             var modType = assembly.GetTypes().Single(_resoniteModType.IsAssignableFrom);
             var resoniteMod = (ResoniteMod)Activator.CreateInstance(modType);
+
+            AssemblyLookupMap.Add(assembly, resoniteMod);
 
             NuGetVersion version;
             if (!NuGetVersion.TryParse(resoniteMod.Version, out version!))
