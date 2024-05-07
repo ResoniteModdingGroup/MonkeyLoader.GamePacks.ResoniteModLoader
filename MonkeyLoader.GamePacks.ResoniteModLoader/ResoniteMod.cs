@@ -34,14 +34,14 @@ namespace ResoniteModLoader
         /// Logs the given object as a line in the log if debug logging is enabled.
         /// </summary>
         /// <param name="message">The object to log.</param>
-        public static void Debug(object message) 
+        public static void Debug(object message)
             => GetLoggerFromStackTrace(new(1)).Debug(() => message);
 
         /// <summary>
         /// Logs the given objects as lines in the log if debug logging is enabled.
         /// </summary>
         /// <param name="messages">The objects to log.</param>
-        public static void Debug(params object[] messages) 
+        public static void Debug(params object[] messages)
             => GetLoggerFromStackTrace(new(1)).Debug(Wrap(messages));
 
         /// <summary>
@@ -51,35 +51,35 @@ namespace ResoniteModLoader
         /// as it won't be generated if debug logging is disabled.
         /// </summary>
         /// <param name="messageProducer">The function generating the object to log.</param>
-        public static void DebugFunc(Func<object> messageProducer) 
+        public static void DebugFunc(Func<object> messageProducer)
             => GetLoggerFromStackTrace(new(1)).Debug(messageProducer);
 
         /// <summary>
         /// Logs the given object as an error line in the log.
         /// </summary>
         /// <param name="message">The object to log.</param>
-        public static void Error(object message) 
+        public static void Error(object message)
             => GetLoggerFromStackTrace(new(1)).Error(Wrap(message));
 
         /// <summary>
         /// Logs the given objects as error lines in the log.
         /// </summary>
         /// <param name="messages">The objects to log.</param>
-        public static void Error(params object[] messages) 
+        public static void Error(params object[] messages)
             => GetLoggerFromStackTrace(new(1)).Error(Wrap(messages));
 
         /// <summary>
         /// Gets whether debug logging is enabled.
         /// </summary>
         /// <returns><c>true</c> if debug logging is enabled.</returns>
-        public static bool IsDebugEnabled() 
+        public static bool IsDebugEnabled()
             => GetLoggerFromStackTrace(new(1)).Level >= LoggingLevel.Debug;
 
         /// <summary>
         /// Logs the given object as a regular line in the log.
         /// </summary>
         /// <param name="message">The object to log.</param>
-        public static void Msg(object message) 
+        public static void Msg(object message)
             => GetLoggerFromStackTrace(new(1)).Info(Wrap(message));
 
         /// <summary>
@@ -93,14 +93,14 @@ namespace ResoniteModLoader
         /// Logs the given object as a warning line in the log.
         /// </summary>
         /// <param name="message">The object to log.</param>
-        public static void Warn(object message) 
+        public static void Warn(object message)
             => GetLoggerFromStackTrace(new(1)).Warn(Wrap(message));
 
         /// <summary>
         /// Logs the given objects as warning lines in the log.
         /// </summary>
         /// <param name="messages">The objects to log.</param>
-        public static void Warn(params object[] messages) 
+        public static void Warn(params object[] messages)
             => GetLoggerFromStackTrace(new(1)).Warn(Wrap(messages));
 
         /// <summary>
