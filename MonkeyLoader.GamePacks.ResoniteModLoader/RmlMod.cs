@@ -27,7 +27,7 @@ namespace ResoniteModLoader
         /// <summary>
         /// Map of Assembly to ResoniteMod, used for logging purposes
         /// </summary>
-        public static Dictionary<Assembly, ResoniteMod> AssemblyLookupMap = new();
+        internal static readonly Dictionary<Assembly, ResoniteMod> AssemblyLookupMap = new();
 
         ///<inheritdoc/>
         public override IFileSystem FileSystem { get; }
