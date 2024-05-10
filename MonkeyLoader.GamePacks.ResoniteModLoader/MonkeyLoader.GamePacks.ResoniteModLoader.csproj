@@ -13,7 +13,7 @@
       <PackageId>MonkeyLoader.GamePacks.ResoniteModLoader</PackageId>
       <Title>ResoniteModLoader</Title>
       <Authors>Banane9, Nytra</Authors>
-      <Version>2.6.3</Version>
+      <Version>2.6.4</Version>
       <Description>This MonkeyLoader Game Pack for Resonite enables loading ResoniteModLoader mods as MonkeyLoader mods.</Description>
       <PackageReadmeFile>README.md</PackageReadmeFile>
       <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
@@ -47,14 +47,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MonkeyLoader" Version="0.15.3-beta" />
-    <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.14.1-beta" GeneratePathProperty="True" />
+    <PackageReference Include="MonkeyLoader" Version="0.16.3-beta" />
+    <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.15.1-beta" GeneratePathProperty="True" />
     <PackageReference Include="PolySharp" Version="1.14.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Resonite.Elements.Core" Version="1.0.2" />
-    <PackageReference Include="Resonite.FrooxEngine" Version="2024.4.26.1426" />
+    <PackageReference Include="Resonite.FrooxEngine" Version="2024.4.32.495" />
     <PackageReference Include="Zio" Version="0.17.0" />
   </ItemGroup>
 
