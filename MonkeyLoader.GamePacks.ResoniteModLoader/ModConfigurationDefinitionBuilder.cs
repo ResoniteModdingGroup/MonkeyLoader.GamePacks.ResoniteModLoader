@@ -110,7 +110,6 @@ namespace ResoniteModLoader
                 _owner.Logger.Info(() => $"Found FrooxEngine.RangeAttribute on field {field.Name}");
                 var min = Convert.ChangeType(rangeAttribute.Min, fieldValue.ValueType());
                 var max = Convert.ChangeType(rangeAttribute.Max, fieldValue.ValueType());
-                _owner.Logger.Info(() => $"{rangeAttribute.Min} {rangeAttribute.Max} {min} {max}");
                 _addRangeKeyMethod.MakeGenericMethod(fieldValue.ValueType()).Invoke(null, new object[] { fieldValue.UntypedKey, min, max });
                 _owner.Logger.Info(() => $"Added ConfigKeyRange<{fieldValue.ValueType().Name}> component.");
             }
