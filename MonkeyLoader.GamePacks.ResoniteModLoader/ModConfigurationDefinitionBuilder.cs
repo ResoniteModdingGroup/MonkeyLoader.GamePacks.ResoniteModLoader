@@ -90,8 +90,8 @@ namespace ResoniteModLoader
 
         private static void AddRangeComponent<T>(DefiningConfigKey<T> key, T min, T max)
         {
-            var rangeKey = new ConfigKeyRange<T>(min, max, null);
-            key.Components.Add(rangeKey);
+            var rangeComponent = new ConfigKeyRange<T>(min, max, null);
+            key.Components.Add(rangeComponent);
         }
 
         private void ProcessField(FieldInfo field)
