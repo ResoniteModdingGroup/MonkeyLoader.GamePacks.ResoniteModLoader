@@ -14,7 +14,7 @@ namespace ResoniteModLoader
     public class ModConfigurationDefinitionBuilder
     {
         private static readonly Type _modConfigKeyType = typeof(ModConfigurationKey);
-        private static readonly MethodInfo _addRangeKeyMethod = AccessTools.Method(typeof(ModConfigurationDefinitionBuilder), nameof(AddRangeKey));
+        private static readonly MethodInfo _addRangeComponentMethod = AccessTools.Method(typeof(ModConfigurationDefinitionBuilder), nameof(AddRangeComponent));
         private readonly HashSet<ModConfigurationKey> _keys = new();
         private readonly ResoniteModBase _owner;
         private bool _autoSaveConfig = true;
@@ -88,7 +88,7 @@ namespace ResoniteModLoader
                 .Do(ProcessField);
         }
 
-        private static void AddRangeKey<T>(DefiningConfigKey<T> key, T min, T max)
+        private static void AddRangeComponent<T>(DefiningConfigKey<T> key, T min, T max)
         {
             var rangeKey = new ConfigKeyRange<T>(min, max, null);
             key.Components.Add(rangeKey);
@@ -110,7 +110,7 @@ namespace ResoniteModLoader
                 _owner.Logger.Info(() => $"Found FrooxEngine.RangeAttribute on field {field.Name}");
                 var min = Convert.ChangeType(rangeAttribute.Min, fieldValue.ValueType());
                 var max = Convert.ChangeType(rangeAttribute.Max, fieldValue.ValueType());
-                _addRangeKeyMethod.MakeGenericMethod(fieldValue.ValueType()).Invoke(null, new object[] { fieldValue.UntypedKey, min, max });
+                _addRangeComponentMethod.MakeGenericMethod(fieldValue.ValueType()).Invoke(null, new object[] { fieldValue.UntypedKey, min, max });
                 _owner.Logger.Info(() => $"Added ConfigKeyRange<{fieldValue.ValueType().Name}> component.");
             }
 
