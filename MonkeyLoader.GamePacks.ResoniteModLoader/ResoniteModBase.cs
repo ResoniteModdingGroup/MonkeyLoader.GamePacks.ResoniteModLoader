@@ -17,6 +17,10 @@ namespace ResoniteModLoader
     {
         private Mod _mod;
 
+        Mod INestedIdentifiable<Mod>.Parent => _mod;
+
+        IIdentifiable INestedIdentifiable.Parent => _mod;
+
         /// <inheritdoc/>
         public AssemblyName AssemblyName { get; }
 

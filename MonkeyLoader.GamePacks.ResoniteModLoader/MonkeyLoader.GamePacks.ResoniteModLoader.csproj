@@ -47,7 +47,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MonkeyLoader" Version="0.16.3-beta" />
+    <PackageReference Include="MonkeyLoader" Version="0.17.0-beta-identifiables" />
     <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.15.1-beta" GeneratePathProperty="True" />
     <PackageReference Include="PolySharp" Version="1.14.1">
       <PrivateAssets>all</PrivateAssets>
