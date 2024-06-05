@@ -255,6 +255,13 @@ namespace ResoniteModLoader
         /// <inheritdoc/>
         public Version Version { get; private set; }
 
+        /// <summary>
+        /// Creates a new <see cref="ModConfiguration"/> definition.
+        /// </summary>
+        /// <param name="owner">The mod owning the config.</param>
+        /// <param name="configVersion">The version of the config.</param>
+        /// <param name="keys">The config keys for the config.</param>
+        /// <param name="autoSaveConfig">Whether to automatically save the config.</param>
         public ModConfigurationDefinition(ResoniteModBase owner, Version configVersion, HashSet<ModConfigurationKey> keys, bool autoSaveConfig)
         {
             Owner = owner;

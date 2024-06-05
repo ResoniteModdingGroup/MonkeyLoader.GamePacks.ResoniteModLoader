@@ -13,13 +13,12 @@ using System.Threading.Tasks;
 
 namespace ResoniteModLoader
 {
+    /// <summary>
+    /// Base class for <see cref="ResoniteMod"/>s.
+    /// </summary>
     public abstract class ResoniteModBase : IMonkey
     {
-        private Mod _mod;
-
-        Mod INestedIdentifiable<Mod>.Parent => _mod;
-
-        IIdentifiable INestedIdentifiable.Parent => _mod;
+        private Mod _mod = null!;
 
         /// <inheritdoc/>
         public AssemblyName AssemblyName { get; }
@@ -46,7 +45,7 @@ namespace ResoniteModLoader
         public bool Failed { get; private set; }
 
         /// <inheritdoc/>
-        public IEnumerable<IFeaturePatch> FeaturePatches { get; }
+        public IEnumerable<IFeaturePatch> FeaturePatches { get; } = Array.Empty<IFeaturePatch>();
 
         /// <inheritdoc/>
         public string FullId { get; }
@@ -91,6 +90,10 @@ namespace ResoniteModLoader
         /// </summary>
         public abstract string Name { get; }
 
+        Mod INestedIdentifiable<Mod>.Parent => _mod;
+
+        IIdentifiable INestedIdentifiable.Parent => _mod;
+
         /// <inheritdoc/>
         public bool Ran { get; private set; }
 
@@ -108,14 +111,21 @@ namespace ResoniteModLoader
         /// </summary>
         public abstract string Version { get; }
 
+        /// <summary>
+        /// Gets the Mod's configuration.
+        /// </summary>
         protected abstract ModConfiguration? Configuration { get; }
 
+        /// <summary>
+        /// Creates a new Resonite Mod instance.
+        /// </summary>
         protected ResoniteModBase()
         {
             Type = GetType();
             AssemblyName = new(Type.Assembly.GetName().Name);
 
             FullId = $"RML.{Name}";
+            Harmony = new(FullId);
         }
 
         /// <inheritdoc/>

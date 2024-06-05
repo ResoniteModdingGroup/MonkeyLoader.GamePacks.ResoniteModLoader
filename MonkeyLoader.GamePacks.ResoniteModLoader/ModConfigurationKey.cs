@@ -26,8 +26,20 @@ namespace ResoniteModLoader
         public string Name => NameProxy;
 
         internal abstract IDefiningConfigKey UntypedKey { get; }
+
+        /// <summary>
+        /// Gets the proxied description from the <see cref="ModConfigurationKey{T}.Key"/>.
+        /// </summary>
         protected abstract string? DescriptionProxy { get; }
+
+        /// <summary>
+        /// Gets the proxied internal access only value from the <see cref="ModConfigurationKey{T}.Key"/>.
+        /// </summary>
         protected abstract bool InternalAccessOnlyProxy { get; }
+
+        /// <summary>
+        /// Gets the proxied name from the <see cref="ModConfigurationKey{T}.Key"/>.
+        /// </summary>
         protected abstract string NameProxy { get; }
 
         internal ModConfigurationKey()
@@ -96,6 +108,9 @@ namespace ResoniteModLoader
     {
         private static int _replacementCounter = 0;
 
+        /// <summary>
+        /// Gets the internal MonkeyLoader config key.
+        /// </summary>
         public DefiningConfigKey<T> Key { get; }
 
         internal override IDefiningConfigKey UntypedKey => Key;

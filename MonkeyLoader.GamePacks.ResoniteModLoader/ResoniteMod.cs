@@ -19,6 +19,7 @@ namespace ResoniteModLoader
         /// <inheritdoc/>
         protected override ModConfiguration? Configuration => _configuration.Value;
 
+        /// <inheritdoc/>
         protected ResoniteMod()
         {
             _configuration = new(() =>
@@ -86,7 +87,7 @@ namespace ResoniteModLoader
         /// Logs the given objects as regular lines in the log.
         /// </summary>
         /// <param name="messages">The objects to log.</param>
-        public static void Msg(params object[] messages) 
+        public static void Msg(params object[] messages)
             => GetLoggerFromStackTrace(new(1)).Info(Wrap(messages));
 
         /// <summary>
@@ -141,23 +142,6 @@ namespace ResoniteModLoader
         }
 
         /// <summary>
-        /// Build the defined configuration for this mod.
-        /// </summary>
-        /// <returns>This mod's configuration definition.</returns>
-        internal ModConfigurationDefinition? BuildConfigurationDefinition()
-        {
-            ModConfigurationDefinitionBuilder builder = new(this);
-            builder.ProcessAttributes();
-            DefineConfiguration(builder);
-            return builder.Build();
-        }
-
-        private static Func<object> Wrap(object message) => () => message;
-
-        private static IEnumerable<Func<object>> Wrap(IEnumerable<object> messages)
-            => messages.Select(Wrap);
-
-        /// <summary>
         /// Get the Logger for the mod from a stack trace.
         /// </summary>
         /// <param name="stackTrace">A stack trace captured by the callee</param>
@@ -178,5 +162,22 @@ namespace ResoniteModLoader
             }
             return ModLoader.Logger;
         }
+
+        /// <summary>
+        /// Build the defined configuration for this mod.
+        /// </summary>
+        /// <returns>This mod's configuration definition.</returns>
+        internal ModConfigurationDefinition? BuildConfigurationDefinition()
+        {
+            ModConfigurationDefinitionBuilder builder = new(this);
+            builder.ProcessAttributes();
+            DefineConfiguration(builder);
+            return builder.Build();
+        }
+
+        private static Func<object> Wrap(object message) => () => message;
+
+        private static IEnumerable<Func<object>> Wrap(IEnumerable<object> messages)
+            => messages.Select(Wrap);
     }
 }
