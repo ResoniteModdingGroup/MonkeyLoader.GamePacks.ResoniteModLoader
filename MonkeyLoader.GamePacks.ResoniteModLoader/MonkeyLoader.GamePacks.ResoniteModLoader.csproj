@@ -48,13 +48,13 @@
 
   <ItemGroup>
     <PackageReference Include="MonkeyLoader" Version="0.17.2-beta" />
-    <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.15.3-beta" GeneratePathProperty="True" />
+    <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.16.0-beta" GeneratePathProperty="True" />
     <PackageReference Include="PolySharp" Version="1.14.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Resonite.Elements.Core" Version="1.0.2" />
-    <PackageReference Include="Resonite.FrooxEngine" Version="2024.6.5.198" />
+    <PackageReference Include="Resonite.FrooxEngine" Version="2024.6.11.74" />
     <PackageReference Include="Zio" Version="0.18.0" />
   </ItemGroup>
 
