@@ -4,7 +4,6 @@
     <TargetFramework>net462</TargetFramework>
     <AssemblyTitle>ResoniteModLoader</AssemblyTitle>
     <AssemblyName>ResoniteModLoader</AssemblyName>
-    <AssemblyFileName>$(AssemblyTitle).dll</AssemblyFileName>
     <RootNamespace>ResoniteModLoader</RootNamespace>
   </PropertyGroup>
 
@@ -13,27 +12,15 @@
       <PackageId>MonkeyLoader.GamePacks.ResoniteModLoader</PackageId>
       <Title>ResoniteModLoader</Title>
       <Authors>Banane9, Nytra</Authors>
-      <Version>2.6.6</Version>
+      <Version>2.6.7</Version>
       <Description>This MonkeyLoader Game Pack for Resonite enables loading ResoniteModLoader mods as MonkeyLoader mods.</Description>
       <PackageReadmeFile>README.md</PackageReadmeFile>
       <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
       <PackageProjectUrl>https://github.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.ResoniteModLoader</PackageProjectUrl>
-      <RepositoryUrl>https://github.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.ResoniteModLoader.git</RepositoryUrl>
       <PackageIconUrl>https://raw.githubusercontent.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.ResoniteModLoader/master/Icon.png</PackageIconUrl>
       <PackageIcon>/Icon.png</PackageIcon>
-      <RepositoryType>git</RepositoryType>
       <PackageTags>mod; mods; modding; mod; loader; monkeyloader; resonite; integration; rml; resonitemodloader</PackageTags>
-      <IncludeSymbols>False</IncludeSymbols>
-      <EmbedAllSources>True</EmbedAllSources>
-      <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-      <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);AddSymbolsToPackage</TargetsForTfmSpecificContentInPackage>
     </PropertyGroup>
-
-    <Target Name="AddSymbolsToPackage">
-      <ItemGroup>
-        <TfmSpecificPackageFile Include="$(OutDir)$(AssemblyName).pdb" PackagePath="lib/$(TargetFramework)/" />
-      </ItemGroup>
-    </Target>
 
   <Target Name="CopyPackage" AfterTargets="Pack">
     <Copy Condition="'$(CopyToLibraries)'=='true'" SourceFiles="$(OutputPath)..\$(PackageId).$(PackageVersion).nupkg" DestinationFiles="$(ResonitePath)\MonkeyLoader\GamePacks\$(PackageId).nupkg" />
@@ -47,15 +34,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MonkeyLoader" Version="0.17.2-beta" />
-    <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.16.0-beta" GeneratePathProperty="True" />
+    <PackageReference Include="MonkeyLoader" Version="0.17.5-beta" />
+    <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.16.4-beta" GeneratePathProperty="True" />
     <PackageReference Include="PolySharp" Version="1.14.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Resonite.Elements.Core" Version="1.0.2" />
     <PackageReference Include="Resonite.FrooxEngine" Version="2024.6.11.74" />
-    <PackageReference Include="Zio" Version="0.18.0" />
+    <PackageReference Include="Zio" Version="0.19.0" />
   </ItemGroup>
 
   <ItemGroup>

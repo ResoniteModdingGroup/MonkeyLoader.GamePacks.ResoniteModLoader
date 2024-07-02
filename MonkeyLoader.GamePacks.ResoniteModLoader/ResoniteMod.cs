@@ -1,5 +1,6 @@
 using MonkeyLoader;
 using MonkeyLoader.Logging;
+using MonkeyLoader.Resonite;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -129,6 +130,8 @@ namespace ResoniteModLoader
         /// <inheritdoc/>
         public override bool Run()
         {
+            LoadProgressReporter.SetSubphase(Name);
+
             try
             {
                 OnEngineInit();
@@ -138,6 +141,10 @@ namespace ResoniteModLoader
             {
                 Logger.Error(() => ex.Format($"Error while intitializing RML Mod {Name}:"));
                 return false;
+            }
+            finally
+            {
+                LoadProgressReporter.ExitSubphase();
             }
         }
 
