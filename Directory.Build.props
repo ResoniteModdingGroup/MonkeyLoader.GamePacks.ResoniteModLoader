@@ -14,7 +14,7 @@
     
     <RestoreAdditionalProjectSources>
       https://pkg.munally.com/MonkeyModdingTroop/index.json;
-      https://pkg.munally.com/ResoniteModdingGroup/index.json
+      https://nuget.pkg.github.com/ResoniteModdingGroup/index.json
     </RestoreAdditionalProjectSources>
   </PropertyGroup>
 
