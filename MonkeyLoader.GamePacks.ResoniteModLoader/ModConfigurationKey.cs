@@ -138,7 +138,7 @@ namespace ResoniteModLoader
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                ModLoader.Logger.Error(() => $"ModConfigurationKey with description [{description}] has null or whitespace name - using Spacer name!");
+                ModLoader.Logger.Warn(() => $"ModConfigurationKey with description [{description}] has null or whitespace name - using Spacer name!");
 
                 Key = new($"Spacer-{name?.GetHashCode() ?? description?.GetHashCode() ?? _replacementCounter++}",
                     description, computeDefault, internalAccessOnly, valueValidator);
