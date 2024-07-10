@@ -12,7 +12,7 @@
       <PackageId>MonkeyLoader.GamePacks.ResoniteModLoader</PackageId>
       <Title>ResoniteModLoader</Title>
       <Authors>Banane9, Nytra</Authors>
-      <Version>2.6.8</Version>
+      <Version>2.7.0</Version>
       <Description>This MonkeyLoader Game Pack for Resonite enables loading ResoniteModLoader mods as MonkeyLoader mods.</Description>
       <PackageReadmeFile>README.md</PackageReadmeFile>
       <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
@@ -34,8 +34,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MonkeyLoader" Version="0.17.5-beta" />
-    <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.16.4-beta" GeneratePathProperty="True" />
+    <PackageReference Include="MonkeyLoader" Version="0.19.0-beta" />
+    <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.16.6-beta" GeneratePathProperty="True" />
     <PackageReference Include="PolySharp" Version="1.14.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
