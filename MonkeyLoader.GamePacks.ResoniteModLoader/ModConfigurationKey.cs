@@ -56,6 +56,10 @@ namespace ResoniteModLoader
         /// <inheritdoc/>
         public abstract override int GetHashCode();
 
+        /// <inheritdoc/>
+        public override string ToString()
+            => $"ConfigKey Name: {Name}, Description: {Description}, InternalAccessOnly: {InternalAccessOnly}, Type: {ValueType()}, Value: {UntypedKey.GetValue()}";
+
         /// <summary>
         /// Tries to compute the default value for this key, if a default provider was set.
         /// </summary>
