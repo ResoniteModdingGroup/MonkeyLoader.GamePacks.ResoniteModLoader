@@ -51,12 +51,6 @@ namespace ResoniteModLoader
         /// <summary>
         /// Ignore the version number and attempt to load the config from disk.
         /// </summary>
-        [Obsolete("Use IncompatibleConfigurationHandlingOption.FORCELOAD Instead")]
-        FORCE_LOAD,
-
-        /// <summary>
-        /// Ignore the version number and attempt to load the config from disk.
-        /// </summary>
         FORCELOAD,
     }
 
