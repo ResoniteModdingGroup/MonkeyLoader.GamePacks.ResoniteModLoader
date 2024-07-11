@@ -27,7 +27,7 @@ namespace ResoniteModLoader
         /// </summary>
         public static readonly string VERSION = VERSION_CONSTANT;
 
-        internal const string VERSION_CONSTANT = "2.7.0";
+        internal const string VERSION_CONSTANT = "3.0.0";
 
         private static readonly Lazy<bool> _isHeadless = new(() => AccessTools.AllTypes().Any(type => type.Namespace == "FrooxEngine.Headless"));
 
