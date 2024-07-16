@@ -2,9 +2,12 @@ using FrooxEngine;
 using HarmonyLib;
 using MonkeyLoader;
 using MonkeyLoader.Meta;
+using MonkeyLoader.NuGet;
 using MonkeyLoader.Patching;
 using MonkeyLoader.Resonite;
 using MonkeyLoader.Resonite.Features.FrooxEngine;
+using NuGet.Packaging.Core;
+using NuGet.Versioning;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -99,7 +102,11 @@ namespace ResoniteModLoader
                     try
                     {
                         var assembly = await Task.Run(() => Assembly.LoadFrom(file));
-                        Logger.Info(() => $"Loaded library from rml_libs: {file}");
+                        var name = assembly.GetName();
+
+                        Mod.Loader.NuGet.Add(new LoadedNuGetPackage(new PackageIdentity(name.Name, new NuGetVersion(name.Version)), NuGetHelper.Framework));
+
+                        Logger.Info(() => $"Loaded library {name.Name}.{name.Version} from rml_libs: {file}");
                     }
                     catch (Exception ex)
                     {
@@ -112,8 +119,6 @@ namespace ResoniteModLoader
                 LoadProgressReporter.AdvanceFixedPhase("Collecting RML Mods...");
 
                 var rmlMods = await Task.Run(() => LoadMods().ToArray());
-                foreach (var rmlMod in rmlMods)
-                    Mod.Loader.AddMod(rmlMod);
 
                 LoadProgressReporter.AdvanceFixedPhase("Running RML Mods...");
                 await Task.Run(() => Mod.Loader.RunMods(rmlMods));
@@ -122,6 +127,7 @@ namespace ResoniteModLoader
             catch (Exception ex)
             {
                 Logger.Error(() => ex.Format("Exception in execution hook!"));
+                LoadProgressReporter.AdvanceFixedPhase("Error running RML Mods!");
             }
         }
 
