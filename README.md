@@ -16,6 +16,11 @@ Any libraries from the `rml_libs` folder will be loaded as well.
 3. Download `MonkeyLoader.GamePacks.ResoniteModLoader.nupkg` gamepack from it's [latest release](https://github.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.ResoniteModLoader/releases/latest) to `MonkeyLoader/GamePacks`
 4. Remove RML's library launch option from Steam if you had set it up previously
 
+On linux, there's additionally an extra step:
+
+- Native: Change the steam launch options to `./run_monkeyloader.sh %command%`
+- Proton: Using protontricks, add add `winhttp` to the native libraries
+
 ## Settings Integration
 
 Because the RML mods are loaded as fully integrated MonkeyLoader mods,
