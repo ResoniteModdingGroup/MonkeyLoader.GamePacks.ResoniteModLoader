@@ -1,0 +1,7 @@
+{
+  "localeCode": "de",
+  "authors": [ "Banane9" ],
+  "messages": {
+    "MonkeyLoader.GamePacks.ResoniteModLoader.ModLoader.Description": "Läd Resonite Mod Loader (RML) Bibliotheken und Mods von ihren üblichen Orten."
+  }
+}
