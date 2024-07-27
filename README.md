@@ -9,17 +9,18 @@ This means that any RML mods from the `rml_mods` folder can be loaded directly t
 without adding RML as a library that [Resonite](https://resonite.com) should load.
 Any libraries from the `rml_libs` folder will be loaded as well.
 
+
 ## Installation
 
-1. Download `MonkeyLoader-v...+Resonite-v....zip` [from the latest Resonite gamepack release](https://github.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.Resonite/releases/latest)
+1. Download `MonkeyLoader-v...+Resonite-v....zip` from the [latest Resonite GamePack release](https://github.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.Resonite/releases/latest)
 2. Extract the zip into Resonite's install folder (`C:\Program Files (x86)\Steam\steamapps\common\Resonite`)
-3. Download `MonkeyLoader.GamePacks.ResoniteModLoader.nupkg` gamepack from it's [latest release](https://github.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.ResoniteModLoader/releases/latest) to `MonkeyLoader/GamePacks`
-4. Remove RML's library launch option from Steam if you had set it up previously
+3. Remove RML's `-LoadAssembly "..."` launch arguments from Steam if you had set it up previously
 
-On linux, there's additionally an extra step:
+### Linux
 
 - Native: Change the steam launch options to `./run_monkeyloader.sh %command%`
-- Proton: Using protontricks, add add `winhttp` to the native libraries
+- Wine / Proton: Using winetricks / protontricks, add `winhttp` to the native libraries
+
 
 ## Settings Integration
 
@@ -29,7 +30,8 @@ The settings files will be created under `./MonkeyLoader/Configs` however,
 so any customized settings will have to recreated or manually copied into the json file.
 
 
-![Screenshot of the Resonite Settings with an RML mod opened in the MonkeyLoader category.](https://raw.githubusercontent.com/ResoniteModdingGroup/MonkeyLoader.GamePacks.ResoniteModLoader/master/MonkeyLoaderSettings.png)
+![Screenshot of the Resonite Settings with an RML mod opened in the MonkeyLoader category.](https://github.com/user-attachments/assets/b34e1d1c-6946-4905-8177-63f9b0e58f43)
+
 
 ## Contributing
 
@@ -44,6 +46,6 @@ The short summary of it is:
 3. Add the nuget feeds (`nuget sources Add -Name ... -Source ...`, local and either <https://pkg.munally.com/MonkeyModdingTroop/index.json> & <https://pkg.munally.com/ResoniteModdingGroup/index.json>)
 4. Run `dotnet build`, or build with your IDE of preference.
 
-The long version is that you'll probably want to set it up privately on GitHub nuget packages.
+The long version is that you'll probably want to set it up privately on GitHub NuGet packages.
 Though this isn't legal advice and you should check that [Resonite's TOS](https://resonite.com/policies/TermsOfService.html) allows it.
 The feeds can also be directly used from GitHub, though that requires authentication using a PAT.
