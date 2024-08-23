@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using EnumerableToolkit;
+using HarmonyLib;
 using MonkeyLoader;
 using MonkeyLoader.Configuration;
 using MonkeyLoader.Logging;
