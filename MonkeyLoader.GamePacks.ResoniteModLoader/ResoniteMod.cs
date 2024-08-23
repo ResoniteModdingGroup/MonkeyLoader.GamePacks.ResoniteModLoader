@@ -139,7 +139,7 @@ namespace ResoniteModLoader
             }
             catch (Exception ex)
             {
-                Logger.Error(() => ex.Format($"Error while intitializing RML Mod {Name}:"));
+                Logger.Error(ex.LogFormat($"Error while intitializing RML Mod {Name}:"));
                 return false;
             }
             finally

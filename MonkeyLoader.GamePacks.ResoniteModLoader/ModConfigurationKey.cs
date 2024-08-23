@@ -1,3 +1,4 @@
+using EnumerableToolkit;
 using MonkeyLoader;
 using MonkeyLoader.Configuration;
 using System;

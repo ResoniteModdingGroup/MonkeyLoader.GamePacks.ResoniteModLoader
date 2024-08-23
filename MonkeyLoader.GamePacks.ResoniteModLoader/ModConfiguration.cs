@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using EnumerableToolkit;
 using FrooxEngine;
 using HarmonyLib;
 using MonkeyLoader;

@@ -49,7 +49,7 @@ namespace ResoniteModLoader
         public static IEnumerable<ResoniteModBase> Mods()
         {
             return Mod.Loader.RegularMods
-                .SelectCastable<Mod, RmlMod>()
+                .OfType<RmlMod>()
                 .SelectMany(rmlMod => rmlMod.Monkeys)
                 .Cast<ResoniteModBase>();
         }
