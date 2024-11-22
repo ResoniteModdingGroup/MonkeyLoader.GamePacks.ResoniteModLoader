@@ -1,5 +1,6 @@
 using MonkeyLoader;
 using MonkeyLoader.Logging;
+using MonkeyLoader.Patching;
 using MonkeyLoader.Resonite;
 using System;
 using System.Collections;
@@ -149,15 +150,18 @@ namespace ResoniteModLoader
         }
 
         /// <summary>
-        /// Get the Logger for the mod from a stack trace.
+        /// Get the <see cref="Logger"/> for the nearest <see cref="RmlMod"/> from the <paramref name="stackTrace"/>.
         /// </summary>
         /// <param name="stackTrace">A stack trace captured by the callee</param>
-        /// <returns>The executing mod's Logger, or ModLoader.Logger if none found</returns>
+        /// <returns>
+        /// The executing <see cref="RmlMod"/>'s <see cref="ResoniteModBase.Logger">Logger</see>,
+        /// or <see cref="ModLoader"/>.<see cref="MonkeyBase{TMonkey}.Logger">Logger</see> if no mod is found.
+        /// </returns>
         internal static Logger GetLoggerFromStackTrace(StackTrace stackTrace)
         {
-            for (int i = 0; i < stackTrace.FrameCount; i++)
+            for (var i = 0; i < stackTrace.FrameCount; i++)
             {
-                Assembly? assembly = stackTrace.GetFrame(i)?.GetMethod()?.DeclaringType?.Assembly;
+                var assembly = stackTrace.GetFrame(i)?.GetMethod()?.DeclaringType?.Assembly;
 
                 if (assembly != null)
                 {
@@ -167,6 +171,7 @@ namespace ResoniteModLoader
                     }
                 }
             }
+
             return ModLoader.Logger;
         }
 
@@ -178,7 +183,9 @@ namespace ResoniteModLoader
         {
             ModConfigurationDefinitionBuilder builder = new(this);
             builder.ProcessAttributes();
+
             DefineConfiguration(builder);
+
             return builder.Build();
         }
 

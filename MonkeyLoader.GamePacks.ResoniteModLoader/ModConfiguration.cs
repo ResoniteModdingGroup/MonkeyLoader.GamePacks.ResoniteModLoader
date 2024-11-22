@@ -114,7 +114,11 @@ namespace ResoniteModLoader
         /// <remarks>
         /// Saving too often may result in save calls being debounced, with only the latest save call being used after a delay.
         /// </remarks>
+#pragma warning disable IDE0060 // Remove unused parameter
+
         public void Save(bool saveDefaultValues = false) => Config.Save();
+
+#pragma warning restore IDE0060 // Remove unused parameter
 
         /// <summary>
         /// Sets a configuration value for the given key, throwing a <see cref="KeyNotFoundException"/> if the key is not found
@@ -238,11 +242,9 @@ namespace ResoniteModLoader
         internal bool AutoSave;
 
         /// <inheritdoc/>
+        // clone the collection because I don't trust giving public API users shallow copies one bit
         public ISet<ModConfigurationKey> ConfigurationItemDefinitions
-        {
-            // clone the collection because I don't trust giving public API users shallow copies one bit
-            get => new HashSet<ModConfigurationKey>(ConfigurationItems);
-        }
+            => new HashSet<ModConfigurationKey>(ConfigurationItems);
 
         /// <inheritdoc/>
         public ResoniteModBase Owner { get; private set; }
