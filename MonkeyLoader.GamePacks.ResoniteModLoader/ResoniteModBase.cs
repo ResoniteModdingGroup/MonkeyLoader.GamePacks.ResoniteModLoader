@@ -54,7 +54,7 @@ namespace ResoniteModLoader
         }
 
         /// <inheritdoc/>
-        public IDefiningConfigKey<bool>? EnabledToggle { get; }
+        public IDefiningConfigKey<bool>? EnabledToggle { get; protected set; }
 
         /// <inheritdoc/>
         public bool Failed { get; private set; }
