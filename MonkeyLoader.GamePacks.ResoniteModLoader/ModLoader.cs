@@ -35,8 +35,9 @@ namespace ResoniteModLoader
         private static readonly Lazy<bool> _isHeadless = new(() => AccessTools.AllTypes().Any(type => type.Namespace == "FrooxEngine.Headless"));
 
         /// <summary>
-        /// Returns <c>true</c> if ResoniteModLoader was loaded by a headless
+        /// Gets whether this is running on a headless client.
         /// </summary>
+        /// <value><c>true</c> if ResoniteModLoader was loaded by a headless; otherwise, <c>false</c>.</value>
         public static bool IsHeadless => _isHeadless.Value;
 
         /// <inheritdoc/>
