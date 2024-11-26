@@ -1,4 +1,5 @@
 using MonkeyLoader;
+using MonkeyLoader.Configuration;
 using MonkeyLoader.Logging;
 using MonkeyLoader.Patching;
 using MonkeyLoader.Resonite;
@@ -18,6 +19,11 @@ namespace ResoniteModLoader
     {
         private readonly Lazy<ModConfiguration?> _configuration;
 
+        /// <summary>
+        /// Gets the <see cref="MonkeyBase.Enabled">Enabled</see>-Toggle config item for this mod.
+        /// </summary>
+        internal DefiningConfigKey<bool>? EnabledToggle { get; private set; }
+
         /// <inheritdoc/>
         protected override ModConfiguration? Configuration => _configuration.Value;
 
@@ -26,10 +32,10 @@ namespace ResoniteModLoader
         {
             _configuration = new(() =>
             {
-                if (BuildConfigurationDefinition() is ModConfigurationDefinition definition)
-                    return Config.LoadSection(new ModConfiguration(definition));
+                if (BuildConfigurationDefinition() is not ModConfigurationDefinition definition)
+                    return null;
 
-                return null;
+                return Config.LoadSection(new ModConfiguration(definition));
             });
         }
 
@@ -185,6 +191,9 @@ namespace ResoniteModLoader
             builder.ProcessAttributes();
 
             DefineConfiguration(builder);
+
+            if (builder.TryGetEnabledToggle(out var enabledToggleKey))
+                EnabledToggle = enabledToggleKey;
 
             return builder.Build();
         }

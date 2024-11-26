@@ -18,16 +18,16 @@ namespace ResoniteModLoader
 {
     internal sealed class RmlMod : Mod
     {
+        /// <summary>
+        /// Map of Assembly to ResoniteMod, used for logging purposes
+        /// </summary>
+        internal static readonly Dictionary<Assembly, ResoniteMod> AssemblyLookupMap = new();
+
         private static readonly Type _resoniteModType = typeof(ResoniteMod);
         private static readonly Uri _rmlIconUrl = new("https://avatars.githubusercontent.com/u/145755526");
 
         ///<inheritdoc/>
         public override string Description => "RML Mods don't have descriptions.";
-
-        /// <summary>
-        /// Map of Assembly to ResoniteMod, used for logging purposes
-        /// </summary>
-        internal static readonly Dictionary<Assembly, ResoniteMod> AssemblyLookupMap = new();
 
         ///<inheritdoc/>
         public override IFileSystem FileSystem { get; }
@@ -78,6 +78,11 @@ namespace ResoniteModLoader
 
             authors.Add(resoniteMod.Author);
             monkeys.Add(resoniteMod);
+
+            resoniteMod.GetConfiguration();
+
+            if (resoniteMod.EnabledToggle is not null)
+                MonkeyToggles.A
 
             // Add dependencies after refactoring MKL
             //foreach (var referencedAssembly in assembly.GetReferencedAssemblies())

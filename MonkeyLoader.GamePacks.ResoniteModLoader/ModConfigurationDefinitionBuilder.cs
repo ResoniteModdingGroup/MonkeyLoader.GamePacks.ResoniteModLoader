@@ -3,6 +3,7 @@ using HarmonyLib;
 using MonkeyLoader.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -13,10 +14,14 @@ namespace ResoniteModLoader
     /// </summary>
     public class ModConfigurationDefinitionBuilder
     {
-        private static readonly Type _modConfigKeyType = typeof(ModConfigurationKey);
         private static readonly MethodInfo _addRangeComponentMethod = AccessTools.Method(typeof(ModConfigurationDefinitionBuilder), nameof(AddRangeComponent));
+        private static readonly string[] _definitiveEnabledToggles = new[] { "enabled", "mod enabled", "mod_enabled", "is_enabled" };
+        private static readonly string[] _indicativeEnabledToggles = new[] { "enabled" };
+        private static readonly Type _modConfigKeyType = typeof(ModConfigurationKey);
+
         private readonly HashSet<ModConfigurationKey> _keys = new();
         private readonly ResoniteModBase _owner;
+
         private bool _autoSaveConfig = true;
         private Version _configVersion = new(1, 0, 0);
 
@@ -86,6 +91,43 @@ namespace ResoniteModLoader
             AccessTools.GetDeclaredFields(_owner.GetType())
                 .Where(field => field.GetCustomAttribute<AutoRegisterConfigKeyAttribute>() is not null)
                 .Do(ProcessField);
+        }
+
+        internal bool TryGetEnabledToggle([NotNullWhen(true)] out DefiningConfigKey<bool>? enabledToggleKey, bool remove = true)
+        {
+            enabledToggleKey = null;
+            ModConfigurationKey? enabledToggle = null;
+
+            var potentialKeys = _keys.OfType<ModConfigurationKey<bool>>().ToArray();
+
+            foreach (var definitiveEnabledToggle in _definitiveEnabledToggles)
+            {
+                if (potentialKeys.FirstOrDefault(key => key.Name.Equals(definitiveEnabledToggle, StringComparison.OrdinalIgnoreCase)) is ModConfigurationKey enabledKey)
+                {
+                    enabledToggle = enabledKey;
+                    break;
+                }
+            }
+
+            if (enabledToggle is null)
+            {
+                potentialKeys = potentialKeys
+                    .Where(key => _indicativeEnabledToggles
+                        .Any(name => key.Name.Contains(name, StringComparison.OrdinalIgnoreCase)))
+                    .ToArray();
+
+                if (potentialKeys.Length != 1)
+                    return false;
+
+                enabledToggle = potentialKeys[0];
+            }
+
+            enabledToggleKey = (DefiningConfigKey<bool>)enabledToggle.UntypedKey;
+
+            if (remove)
+                _keys.Remove(enabledToggle);
+
+            return true;
         }
 
         private static void AddRangeComponent<T>(DefiningConfigKey<T> key, T min, T max)
