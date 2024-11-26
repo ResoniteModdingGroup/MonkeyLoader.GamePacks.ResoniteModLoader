@@ -93,16 +93,16 @@ namespace ResoniteModLoader
                 .Do(ProcessField);
         }
 
-        internal bool TryGetEnabledToggle([NotNullWhen(true)] out DefiningConfigKey<bool>? enabledToggleKey, bool remove = true)
+        internal bool TryGetEnabledToggle([NotNullWhen(true)] out DefiningConfigKey<bool>? enabledToggleKey, bool makeInternal = true)
         {
             enabledToggleKey = null;
-            ModConfigurationKey? enabledToggle = null;
+            ModConfigurationKey<bool>? enabledToggle = null;
 
             var potentialKeys = _keys.OfType<ModConfigurationKey<bool>>().ToArray();
 
             foreach (var definitiveEnabledToggle in _definitiveEnabledToggles)
             {
-                if (potentialKeys.FirstOrDefault(key => key.Name.Equals(definitiveEnabledToggle, StringComparison.OrdinalIgnoreCase)) is ModConfigurationKey enabledKey)
+                if (potentialKeys.FirstOrDefault(key => key.Name.Equals(definitiveEnabledToggle, StringComparison.OrdinalIgnoreCase)) is ModConfigurationKey<bool> enabledKey)
                 {
                     enabledToggle = enabledKey;
                     break;
@@ -122,10 +122,15 @@ namespace ResoniteModLoader
                 enabledToggle = potentialKeys[0];
             }
 
-            enabledToggleKey = (DefiningConfigKey<bool>)enabledToggle.UntypedKey;
-
-            if (remove)
+            if (makeInternal && !enabledToggle.InternalAccessOnly)
+            {
                 _keys.Remove(enabledToggle);
+
+                enabledToggle = new ModConfigurationKey<bool>(enabledToggle.Name, enabledToggle.Description, () => true, true);
+                _keys.Add(enabledToggle);
+            }
+
+            enabledToggleKey = enabledToggle.Key;
 
             return true;
         }

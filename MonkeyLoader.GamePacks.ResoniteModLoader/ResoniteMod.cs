@@ -19,11 +19,6 @@ namespace ResoniteModLoader
     {
         private readonly Lazy<ModConfiguration?> _configuration;
 
-        /// <summary>
-        /// Gets the <see cref="MonkeyBase.Enabled">Enabled</see>-Toggle config item for this mod.
-        /// </summary>
-        internal DefiningConfigKey<bool>? EnabledToggle { get; private set; }
-
         /// <inheritdoc/>
         protected override ModConfiguration? Configuration => _configuration.Value;
 

@@ -81,9 +81,6 @@ namespace ResoniteModLoader
 
             resoniteMod.GetConfiguration();
 
-            if (resoniteMod.EnabledToggle is not null)
-                MonkeyToggles.A
-
             // Add dependencies after refactoring MKL
             //foreach (var referencedAssembly in assembly.GetReferencedAssemblies())
             //    dependencies.Add(referencedAssembly.Name, new DependencyReference())
