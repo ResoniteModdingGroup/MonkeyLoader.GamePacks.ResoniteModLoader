@@ -30,7 +30,8 @@ namespace ResoniteModLoader
         public abstract string Author { get; }
 
         /// <inheritdoc/>
-        public bool CanBeDisabled => false;
+        [MemberNotNullWhen(true, nameof(EnabledToggle))]
+        public bool CanBeDisabled => EnabledToggle is not null;
 
         /// <inheritdoc/>
         public Config Config => Mod.Config;
@@ -38,9 +39,22 @@ namespace ResoniteModLoader
         /// <inheritdoc/>
         public bool Enabled
         {
-            get => true;
-            set { }
+            get => !CanBeDisabled || EnabledToggle.GetValue();
+            set
+            {
+                if (CanBeDisabled)
+                {
+                    EnabledToggle.SetValue(value, "SetMonkeyEnabled");
+                    return;
+                }
+
+                if (!value)
+                    throw new NotSupportedException("This monkey can't be disabled!");
+            }
         }
+
+        /// <inheritdoc/>
+        public IDefiningConfigKey<bool>? EnabledToggle { get; }
 
         /// <inheritdoc/>
         public bool Failed { get; private set; }
