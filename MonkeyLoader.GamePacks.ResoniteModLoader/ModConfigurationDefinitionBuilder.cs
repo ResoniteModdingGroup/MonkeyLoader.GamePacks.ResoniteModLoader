@@ -1,3 +1,4 @@
+using EnumerableToolkit;
 using FrooxEngine;
 using HarmonyLib;
 using MonkeyLoader.Configuration;
@@ -120,14 +121,6 @@ namespace ResoniteModLoader
                     return false;
 
                 enabledToggle = potentialKeys[0];
-            }
-
-            if (makeInternal && !enabledToggle.InternalAccessOnly)
-            {
-                _keys.Remove(enabledToggle);
-
-                enabledToggle = new ModConfigurationKey<bool>(enabledToggle.Name, enabledToggle.Description, () => true, true);
-                _keys.Add(enabledToggle);
             }
 
             enabledToggleKey = enabledToggle.Key;
