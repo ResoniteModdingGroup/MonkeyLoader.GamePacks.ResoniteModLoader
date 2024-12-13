@@ -93,7 +93,7 @@ namespace ResoniteModLoader
                 .Do(ProcessField);
         }
 
-        internal bool TryGetEnabledToggle([NotNullWhen(true)] out DefiningConfigKey<bool>? enabledToggleKey, bool makeInternal = true)
+        internal bool TryGetEnabledToggle([NotNullWhen(true)] out DefiningConfigKey<bool>? enabledToggleKey)
         {
             enabledToggleKey = null;
             ModConfigurationKey<bool>? enabledToggle = null;
