@@ -29,6 +29,8 @@ namespace ResoniteModLoader
         /// </summary>
         public abstract string Author { get; }
 
+        IEnumerable<string> IAuthorable.Authors => Author.Yield();
+
         /// <inheritdoc/>
         [MemberNotNullWhen(true, nameof(EnabledToggle))]
         public bool CanBeDisabled => EnabledToggle is not null;
@@ -153,6 +155,9 @@ namespace ResoniteModLoader
         /// </summary>
         /// <returns>This mod's current configuration.</returns>
         public ModConfiguration? GetConfiguration() => Configuration;
+
+        bool IAuthorable.HasAuthor(string name)
+                    => string.Equals(name, Author, StringComparison.InvariantCultureIgnoreCase);
 
         /// <inheritdoc/>
         public abstract bool Run();
