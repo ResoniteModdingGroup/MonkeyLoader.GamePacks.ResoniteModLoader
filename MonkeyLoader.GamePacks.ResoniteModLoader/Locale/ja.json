@@ -1,0 +1,7 @@
+{
+  "localeCode": "ja",
+  "authors": [ "kazu" ],
+  "messages": {
+    "MonkeyLoader.GamePacks.ResoniteModLoader.ModLoader.Description": "Resonite Mod Loader (RML) ライブラリ 及び モッド を通常の場所から読み込めるようにします。"
+  }
+}
