@@ -102,7 +102,7 @@ namespace ResoniteModLoader
 
                     try
                     {
-                        var assembly = await Task.Run(() => Assembly.LoadFrom(file));
+                        var assembly = await Task.Run(() => Assembly.LoadFrom(Path.GetFullPath(file)));
                         var name = assembly.GetName();
 
                         Mod.Loader.NuGet.Add(new LoadedNuGetPackage(new PackageIdentity(name.Name, new NuGetVersion(name.Version)), NuGetHelper.Framework));
