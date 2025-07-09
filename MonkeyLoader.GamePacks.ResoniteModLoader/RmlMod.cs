@@ -59,7 +59,7 @@ namespace ResoniteModLoader
         {
             FileSystem = new MemoryFileSystem() { Name = $"Dummy FileSystem for {Path.GetFileNameWithoutExtension(location)}" };
 
-            var assembly = Assembly.LoadFile(location);
+            var assembly = Assembly.LoadFile(Path.GetFullPath(location));
             var modType = assembly.GetTypes().Single(_resoniteModType.IsAssignableFrom);
             var resoniteMod = (ResoniteMod)Activator.CreateInstance(modType);
 
