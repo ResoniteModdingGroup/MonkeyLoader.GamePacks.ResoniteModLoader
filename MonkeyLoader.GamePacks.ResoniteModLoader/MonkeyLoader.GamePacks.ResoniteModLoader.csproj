@@ -34,13 +34,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.22.1-beta" GeneratePathProperty="true" />
+    <PackageReference Include="MonkeyLoader" Version="0.27.0-beta" />
+    <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.23.1-beta" GeneratePathProperty="true" />
     <PackageReference Include="PolySharp" Version="1.15.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Resonite.Elements.Core" Version="1.4.3" />
-    <PackageReference Include="Resonite.FrooxEngine" Version="2025.3.21.23" />
+    <PackageReference Include="Resonite.Elements.Core" Version="1.4.8.2" />
+    <PackageReference Include="Resonite.FrooxEngine" Version="2025.6.9.1085" />
   </ItemGroup>
 
   <ItemGroup>

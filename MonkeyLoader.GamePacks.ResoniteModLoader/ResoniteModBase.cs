@@ -38,6 +38,8 @@ namespace ResoniteModLoader
         /// <inheritdoc/>
         public Config Config => Mod.Config;
 
+        string? IDisplayable.Description => null;
+
         /// <inheritdoc/>
         public bool Enabled
         {
@@ -69,6 +71,8 @@ namespace ResoniteModLoader
 
         /// <inheritdoc/>
         public Harmony Harmony { get; }
+
+        bool IDisplayable.HasDescription => false;
 
         /// <inheritdoc/>
         public string Id => Name;
