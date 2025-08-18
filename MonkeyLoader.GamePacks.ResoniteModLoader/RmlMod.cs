@@ -1,18 +1,17 @@
-﻿using MonkeyLoader;
-using MonkeyLoader.Meta;
+﻿using MonkeyLoader.Meta;
 using MonkeyLoader.NuGet;
 using NuGet.Frameworks;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Zio;
 using Zio.FileSystems;
+using AssemblyName = MonkeyLoader.AssemblyName;
 
 namespace ResoniteModLoader
 {
@@ -25,6 +24,8 @@ namespace ResoniteModLoader
 
         private static readonly Type _resoniteModType = typeof(ResoniteMod);
         private static readonly Uri _rmlIconUrl = new("https://avatars.githubusercontent.com/u/145755526");
+        
+        private readonly Assembly _modAssembly;
 
         ///<inheritdoc/>
         public override string Description => "RML Mods don't have descriptions.";
@@ -59,11 +60,11 @@ namespace ResoniteModLoader
         {
             FileSystem = new MemoryFileSystem() { Name = $"Dummy FileSystem for {Path.GetFileNameWithoutExtension(location)}" };
 
-            var assembly = Assembly.LoadFile(Path.GetFullPath(location));
-            var modType = assembly.GetTypes().Single(_resoniteModType.IsAssignableFrom);
+            _modAssembly = loader.AssemblyLoadStrategy.LoadFile(Path.GetFullPath(location!));
+            var modType = _modAssembly.GetTypes().Single(_resoniteModType.IsAssignableFrom);
             var resoniteMod = (ResoniteMod)Activator.CreateInstance(modType);
 
-            AssemblyLookupMap.Add(assembly, resoniteMod);
+            AssemblyLookupMap.Add(_modAssembly, resoniteMod);
 
             NuGetVersion version;
             if (!NuGetVersion.TryParse(resoniteMod.Version, out version!))
@@ -84,6 +85,19 @@ namespace ResoniteModLoader
             // Add dependencies after refactoring MKL
             //foreach (var referencedAssembly in assembly.GetReferencedAssemblies())
             //    dependencies.Add(referencedAssembly.Name, new DependencyReference())
+        }
+
+        public override bool TryResolveAssembly(AssemblyName assemblyName, [NotNullWhen(true)] out Assembly? assembly)
+        {
+            if (assemblyName.Name != _modAssembly.GetName().FullName)
+            {
+                assembly = null;
+                return false;
+            }
+            
+            Logger.Debug(() => $"Resolving assembly {assemblyName.Name} to {_modAssembly.FullName} through RmlMod");
+            assembly = _modAssembly;
+            return true;
         }
 
         protected override bool OnLoadEarlyMonkeys() => true;
