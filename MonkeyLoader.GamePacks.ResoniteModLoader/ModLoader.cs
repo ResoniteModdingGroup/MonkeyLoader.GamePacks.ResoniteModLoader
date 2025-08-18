@@ -12,8 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ResoniteModLoader
@@ -102,7 +100,7 @@ namespace ResoniteModLoader
 
                     try
                     {
-                        var assembly = await Task.Run(() => Assembly.LoadFrom(Path.GetFullPath(file)));
+                        var assembly = Mod.Loader.AssemblyLoadStrategy.LoadFile(Path.GetFullPath(file));
                         var name = assembly.GetName();
 
                         Mod.Loader.NuGet.Add(new LoadedNuGetPackage(new PackageIdentity(name.Name, new NuGetVersion(name.Version)), NuGetHelper.Framework));
