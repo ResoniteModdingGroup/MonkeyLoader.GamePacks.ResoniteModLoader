@@ -24,7 +24,7 @@ namespace ResoniteModLoader
 
         private static readonly Type _resoniteModType = typeof(ResoniteMod);
         private static readonly Uri _rmlIconUrl = new("https://avatars.githubusercontent.com/u/145755526");
-        
+
         private readonly Assembly _modAssembly;
 
         ///<inheritdoc/>
@@ -55,14 +55,14 @@ namespace ResoniteModLoader
         public override NuGetFramework TargetFramework => NuGetHelper.Framework;
 
         ///<inheritdoc/>
-        public RmlMod(MonkeyLoader.MonkeyLoader loader, string? location, bool isGamePack)
+        public RmlMod(MonkeyLoader.MonkeyLoader loader, string location, bool isGamePack)
             : base(loader, location, isGamePack)
         {
             FileSystem = new MemoryFileSystem() { Name = $"Dummy FileSystem for {Path.GetFileNameWithoutExtension(location)}" };
 
             _modAssembly = loader.AssemblyLoadStrategy.LoadFile(Path.GetFullPath(location!));
             var modType = _modAssembly.GetTypes().Single(_resoniteModType.IsAssignableFrom);
-            var resoniteMod = (ResoniteMod)Activator.CreateInstance(modType);
+            var resoniteMod = (ResoniteMod)Activator.CreateInstance(modType)!;
 
             AssemblyLookupMap.Add(_modAssembly, resoniteMod);
 
@@ -94,14 +94,16 @@ namespace ResoniteModLoader
                 assembly = null;
                 return false;
             }
-            
+
             Logger.Debug(() => $"Resolving assembly {assemblyName.Name} to {_modAssembly.FullName} through RmlMod");
             assembly = _modAssembly;
             return true;
         }
 
+        ///<inheritdoc/>
         protected override bool OnLoadEarlyMonkeys() => true;
 
+        ///<inheritdoc/>
         protected override bool OnLoadMonkeys() => true;
     }
 }

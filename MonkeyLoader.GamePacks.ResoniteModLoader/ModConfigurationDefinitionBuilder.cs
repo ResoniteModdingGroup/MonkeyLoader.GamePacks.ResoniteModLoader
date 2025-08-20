@@ -142,7 +142,7 @@ namespace ResoniteModLoader
                 return;
             }
 
-            var fieldValue = (ModConfigurationKey)field.GetValue(field.IsStatic ? null : _owner);
+            var fieldValue = (ModConfigurationKey)field.GetValue(field.IsStatic ? null : _owner)!;
 
             if (field.GetCustomAttribute<RangeAttribute>() is RangeAttribute rangeAttribute)
             {
