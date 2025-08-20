@@ -103,7 +103,7 @@ namespace ResoniteModLoader
                         var assembly = Mod.Loader.AssemblyLoadStrategy.LoadFile(Path.GetFullPath(file));
                         var name = assembly.GetName();
 
-                        Mod.Loader.NuGet.Add(new LoadedNuGetPackage(new PackageIdentity(name.Name, new NuGetVersion(name.Version)), NuGetHelper.Framework));
+                        Mod.Loader.NuGet.Add(new LoadedNuGetPackage(new PackageIdentity(name.Name, new NuGetVersion(name.Version!)), NuGetHelper.Framework));
 
                         Logger.Info(() => $"Loaded library {name.Name}.{name.Version} from rml_libs: {file}");
                     }

@@ -41,6 +41,9 @@ namespace ResoniteModLoader
         string? IDisplayable.Description => null;
 
         /// <inheritdoc/>
+        public string? Description => "None";
+
+        /// <inheritdoc/>
         public bool Enabled
         {
             get => !CanBeDisabled || EnabledToggle.GetValue();
@@ -75,6 +78,9 @@ namespace ResoniteModLoader
         bool IDisplayable.HasDescription => false;
 
         /// <inheritdoc/>
+        public bool HasDescription => false;
+
+        /// <inheritdoc/>
         public string Id => Name;
 
         /// <summary>
@@ -93,8 +99,7 @@ namespace ResoniteModLoader
             [MemberNotNull(nameof(_mod))]
             internal set
             {
-                if (value is null)
-                    throw new ArgumentNullException(nameof(value));
+                ArgumentNullException.ThrowIfNull(value);
 
                 if (ReferenceEquals(_mod, value))
                     return;
@@ -143,14 +148,14 @@ namespace ResoniteModLoader
         protected ResoniteModBase()
         {
             Type = GetType();
-            AssemblyName = new(Type.Assembly.GetName().Name);
+            AssemblyName = new(Type.Assembly.GetName().Name!);
 
             FullId = $"RML.{Name}";
             Harmony = new(FullId);
         }
 
         /// <inheritdoc/>
-        public int CompareTo(IMonkey other) => Monkey.AscendingComparer.Compare(this, other);
+        public int CompareTo(IMonkey? other) => Monkey.AscendingComparer.Compare(this, other);
 
         /// <summary>
         /// Gets this mod's current <see cref="ModConfiguration" />.

@@ -52,7 +52,7 @@ namespace ResoniteModLoader
         /// </summary>
         /// <param name="obj">The other object to compare against.</param>
         /// <returns><c>true</c> if the other object is equal to this.</returns>
-        public abstract override bool Equals(object obj);
+        public abstract override bool Equals(object? obj);
 
         /// <inheritdoc/>
         public abstract override int GetHashCode();
@@ -157,7 +157,7 @@ namespace ResoniteModLoader
         }
 
         /// <inheritdoc/>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is ModConfigurationKey<T> other && Key.Equals(other.Key);
 
         /// <inheritdoc/>
