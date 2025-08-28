@@ -25,7 +25,7 @@ namespace ResoniteModLoader
         private static readonly Type _resoniteModType = typeof(ResoniteMod);
         private static readonly Uri _rmlIconUrl = new("https://avatars.githubusercontent.com/u/145755526");
 
-        private readonly Assembly _modAssembly;
+        private readonly Assembly _assembly;
 
         ///<inheritdoc/>
         public override string Description => "RML Mods don't have descriptions.";
@@ -55,16 +55,16 @@ namespace ResoniteModLoader
         public override NuGetFramework TargetFramework => NuGetHelper.Framework;
 
         ///<inheritdoc/>
-        public RmlMod(MonkeyLoader.MonkeyLoader loader, string location, bool isGamePack)
-            : base(loader, location, isGamePack)
+        public RmlMod(MonkeyLoader.MonkeyLoader loader, Assembly assembly)
+            : base(loader, assembly.Location, false)
         {
-            FileSystem = new MemoryFileSystem() { Name = $"Dummy FileSystem for {Path.GetFileNameWithoutExtension(location)}" };
+            FileSystem = new MemoryFileSystem() { Name = $"Dummy FileSystem for {assembly.GetName().Name}" };
 
-            _modAssembly = loader.AssemblyLoadStrategy.LoadFile(Path.GetFullPath(location!));
-            var modType = _modAssembly.GetTypes().Single(_resoniteModType.IsAssignableFrom);
+            _assembly = assembly;
+            var modType = assembly.GetTypes().Single(_resoniteModType.IsAssignableFrom);
             var resoniteMod = (ResoniteMod)Activator.CreateInstance(modType)!;
 
-            AssemblyLookupMap.Add(_modAssembly, resoniteMod);
+            AssemblyLookupMap.Add(assembly, resoniteMod);
 
             NuGetVersion version;
             if (!NuGetVersion.TryParse(resoniteMod.Version, out version!))
@@ -89,14 +89,14 @@ namespace ResoniteModLoader
 
         public override bool TryResolveAssembly(AssemblyName assemblyName, [NotNullWhen(true)] out Assembly? assembly)
         {
-            if (assemblyName.Name != _modAssembly.GetName().FullName)
+            if (assemblyName.Name != _assembly.GetName().FullName)
             {
                 assembly = null;
                 return false;
             }
 
-            Logger.Debug(() => $"Resolving assembly {assemblyName.Name} to {_modAssembly.FullName} through RmlMod");
-            assembly = _modAssembly;
+            Logger.Debug(() => $"Resolving assembly {assemblyName.Name} to {_assembly.FullName} through RmlMod");
+            assembly = _assembly;
             return true;
         }
 
