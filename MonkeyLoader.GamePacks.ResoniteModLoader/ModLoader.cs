@@ -32,7 +32,11 @@ namespace ResoniteModLoader
 
         internal const string VERSION_CONSTANT = "3.0.0";
 
-        private static readonly Lazy<bool> _isHeadless = new(() => AccessTools.AllTypes().Any(type => type.Namespace == "FrooxEngine.Headless"));
+        private static readonly Lazy<bool> _isHeadless = new(()
+            => AppDomain.CurrentDomain.GetAssemblies()
+                .Where(assembly => assembly.GetName().Name?.StartsWith("FrooxEngine") ?? false)
+                .Any(assembly => assembly.DefinedTypes
+                    .Any(type => type.Namespace == "FrooxEngine.Headless")));
 
         /// <summary>
         /// Gets whether this is running on a headless client.
