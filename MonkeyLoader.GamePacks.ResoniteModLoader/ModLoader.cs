@@ -1,3 +1,4 @@
+using Elements.Core;
 using FrooxEngine;
 using HarmonyLib;
 using MonkeyLoader;
@@ -12,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace ResoniteModLoader
@@ -117,7 +119,7 @@ namespace ResoniteModLoader
 
                 LoadProgressReporter.AdvanceFixedPhase("Collecting RML Mods...");
 
-                var rmlMods = await Task.Run(() => LoadMods().ToArray());
+                var rmlMods = await LoadModsAsync().ToArrayAsync();
 
                 LoadProgressReporter.AdvanceFixedPhase("Running RML Mods...");
                 await Task.Run(() => Mod.Loader.RunMods(rmlMods));
@@ -130,26 +132,42 @@ namespace ResoniteModLoader
             }
         }
 
-        private static IEnumerable<RmlMod> LoadMods()
+        private static async IAsyncEnumerable<RmlMod> LoadModsAsync()
         {
+            var modAssemblies = new List<Assembly>();
+
             foreach (var file in GetAssemblyPaths("rml_mods"))
             {
-                LoadProgressReporter.SetSubphase(Path.GetFileNameWithoutExtension(file));
+                try
+                {
+                    var modAssembly = await Task.Run(() => Mod.Loader.AssemblyLoadStrategy.LoadFile(Path.GetFullPath(file!)));
+                    modAssemblies.Add(modAssembly);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Warn(() => ex.Format($"Failed to load assembly from rml_mods: {file}"));
+                }
+            }
+
+            foreach (var modAssembly in modAssemblies)
+            {
+                var fileName = Path.GetFileName(modAssembly.Location);
+                LoadProgressReporter.SetSubphase(modAssembly.GetName().Name!);
 
                 RmlMod? rmlMod = null;
                 var success = true;
 
                 try
                 {
-                    rmlMod = new RmlMod(Mod.Loader, file, false);
-                    Logger.Info(() => $"Loaded mod from rml_mods: {file}");
+                    rmlMod = new RmlMod(Mod.Loader, modAssembly);
+                    Logger.Info(() => $"Loaded mod from rml_mods: {fileName}");
 
                     Mod.Loader.AddMod(rmlMod);
                 }
                 catch (Exception ex)
                 {
                     success = false;
-                    Logger.Warn(() => ex.Format($"Failed to load mod from rml_mods: {file}"));
+                    Logger.Warn(() => ex.Format($"Failed to load mod from rml_mods: {fileName}"));
                 }
 
                 LoadProgressReporter.ExitSubphase();
