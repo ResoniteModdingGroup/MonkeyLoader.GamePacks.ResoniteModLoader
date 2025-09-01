@@ -195,5 +195,24 @@ namespace ResoniteModLoader
             FireOnChanged(configKeyChangedEventArgs.NewValue);
             ModConfiguration.FireConfigurationChangedEvent(this, configKeyChangedEventArgs.Label);
         }
+
+        /// <summary>
+        /// Gets or sets the value of this configuration key.
+        /// <para>
+        /// When getting, attempts to retrieve the current value assigned to this key, or <c>default(T)</c> if none is set.
+        /// When setting, assigns the provided value to this key and notifies any <see cref="OnChanged"/> subscribers.
+        /// </para>
+        /// </summary>
+        public T? Value
+        {
+            get
+            {
+                return (T?)ModConfiguration.GetValue(this);
+            }
+            set
+            {
+                ModConfiguration.Set(this, value);
+            }
+        }
     }
 }
