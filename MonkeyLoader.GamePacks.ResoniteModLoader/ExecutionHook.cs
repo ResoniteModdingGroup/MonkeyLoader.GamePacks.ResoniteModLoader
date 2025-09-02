@@ -1,5 +1,6 @@
 ﻿using FrooxEngine;
 using MonkeyLoader.Logging;
+using MonkeyLoader.Meta;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,20 +34,17 @@ namespace ResoniteModLoader
 
         public async Task<bool> Initialize(PlatformInterface platformInterface)
         {
-            ResoniteMod.GetLoggerFromStackTrace(new(1)).Debug(() => "Initialize() from platformInterface");
+            ModLoader.Logger.Debug(() => "Initialize() from platformInterface");
             Platform = platformInterface;
             return true;
         }
 #pragma warning restore CS1591
 
 #pragma warning disable CA2255
-        /// <summary>
-        /// One method that can start the static constructor of the mod loader.
-        /// </summary>
         [ModuleInitializer]
         public static void Init()
         {
-            ResoniteMod.GetLoggerFromStackTrace(new(1)).Debug(() => "Init() from ModuleInitializer");
+            //ModLoader.Logger.Debug(() => "Init() from ModuleInitializer"); // throws for some reason
         }
 #pragma warning restore CA2255
 
