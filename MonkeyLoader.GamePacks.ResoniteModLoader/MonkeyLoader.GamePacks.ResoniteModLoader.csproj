@@ -33,9 +33,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.24.1-beta" GeneratePathProperty="true" />
+    <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.25.1-beta" GeneratePathProperty="true" />
     <PackageReference Include="Resonite.Elements.Core" Version="1.4.9.4" />
-    <PackageReference Include="Resonite.FrooxEngine" Version="2025.8.25.222" />
+    <PackageReference Include="Resonite.Elements.Data" Version="1.0.6" />
+    <PackageReference Include="Resonite.FrooxEngine" Version="2025.8.28.607" />
   </ItemGroup>
 
   <ItemGroup>
