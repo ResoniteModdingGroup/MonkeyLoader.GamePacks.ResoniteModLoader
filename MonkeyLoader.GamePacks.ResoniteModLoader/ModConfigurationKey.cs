@@ -118,6 +118,23 @@ namespace ResoniteModLoader
         /// </summary>
         public DefiningConfigKey<T> Key { get; }
 
+        /// <summary>
+        /// Gets or sets the value of this configuration key.
+        /// </summary>
+        /// <remarks>
+        /// When getting, attempts to retrieve the current value assigned to this key, or <c>default(T)</c> if none is set.<br/>
+        /// When setting, assigns the provided value to this key and notifies any <see cref="ModConfigurationKey.OnChanged">OnChanged</see> subscribers.
+        /// </remarks>
+        public T? Value
+        {
+            get => Key.GetValue();
+
+            // In RML this bypasses the validation check, but ML doesn't let anything set an invalid value.
+            // A debate could be had as to whether to use the version that throws or not,
+            // but I'm using the one that throws to not let a mod continue with the old value if the new one is invalid.
+            set => Key.SetValue(value!);
+        }
+
         internal override IDefiningConfigKey UntypedKey => Key;
 
         /// <inheritdoc/>
@@ -194,25 +211,6 @@ namespace ResoniteModLoader
         {
             FireOnChanged(configKeyChangedEventArgs.NewValue);
             ModConfiguration.FireConfigurationChangedEvent(this, configKeyChangedEventArgs.Label);
-        }
-
-        /// <summary>
-        /// Gets or sets the value of this configuration key.
-        /// <para>
-        /// When getting, attempts to retrieve the current value assigned to this key, or <c>default(T)</c> if none is set.
-        /// When setting, assigns the provided value to this key and notifies any <see cref="OnChanged"/> subscribers.
-        /// </para>
-        /// </summary>
-        public T? Value
-        {
-            get
-            {
-                return (T?)ModConfiguration.GetValue(this);
-            }
-            set
-            {
-                ModConfiguration.Set(this, value);
-            }
         }
     }
 }
