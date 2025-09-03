@@ -68,8 +68,6 @@ namespace ResoniteModLoader
         /// <inheritdoc/>
         protected override bool OnEngineInit()
         {
-            LoadProgressReporter.AddFixedPhases(4);
-
             return base.OnEngineInit();
         }
 
@@ -96,7 +94,7 @@ namespace ResoniteModLoader
         {
             await __result;
 
-            LoadProgressReporter.AdvanceFixedPhase("Loading RML Libraries...");
+            LoadProgressReporter.SetSubphase("Loading RML Libraries...");
 
             try
             {
@@ -117,22 +115,20 @@ namespace ResoniteModLoader
                     {
                         Logger.Warn(() => ex.Format($"Failed to load library from rml_libs: {file}"));
                     }
-
-                    LoadProgressReporter.ExitSubphase();
                 }
 
-                LoadProgressReporter.AdvanceFixedPhase("Collecting RML Mods...");
+                LoadProgressReporter.SetSubphase("Collecting RML Mods...");
 
                 var rmlMods = await LoadModsAsync().ToArrayAsync();
 
-                LoadProgressReporter.AdvanceFixedPhase("Running RML Mods...");
+                LoadProgressReporter.SetSubphase("Running RML Mods...");
                 await Task.Run(() => Mod.Loader.RunMods(rmlMods));
-                LoadProgressReporter.AdvanceFixedPhase("Done with RML");
+                LoadProgressReporter.SetSubphase("Done with RML");
             }
             catch (Exception ex)
             {
                 Logger.Error(() => ex.Format("Exception in execution hook!"));
-                LoadProgressReporter.AdvanceFixedPhase("Error running RML Mods!");
+                LoadProgressReporter.SetSubphase("Error running RML Mods!");
             }
         }
 
@@ -173,8 +169,6 @@ namespace ResoniteModLoader
                     success = false;
                     Logger.Warn(() => ex.Format($"Failed to load mod from rml_mods: {fileName}"));
                 }
-
-                LoadProgressReporter.ExitSubphase();
 
                 if (success)
                     yield return rmlMod!;

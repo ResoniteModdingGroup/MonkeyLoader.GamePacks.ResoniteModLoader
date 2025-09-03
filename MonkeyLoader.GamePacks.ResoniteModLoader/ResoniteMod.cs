@@ -1,3 +1,4 @@
+using FrooxEngine;
 using MonkeyLoader;
 using MonkeyLoader.Configuration;
 using MonkeyLoader.Logging;
@@ -143,10 +144,6 @@ namespace ResoniteModLoader
             {
                 Logger.Error(ex.LogFormat($"Error while intitializing RML Mod {Name}:"));
                 return false;
-            }
-            finally
-            {
-                LoadProgressReporter.ExitSubphase();
             }
         }
 
