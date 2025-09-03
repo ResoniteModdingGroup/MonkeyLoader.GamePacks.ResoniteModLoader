@@ -68,8 +68,6 @@ namespace ResoniteModLoader
         /// <inheritdoc/>
         protected override bool OnEngineInit()
         {
-            LoadProgressReporter.AddFixedPhases(4);
-
             return base.OnEngineInit();
         }
 
@@ -96,13 +94,13 @@ namespace ResoniteModLoader
         {
             await __result;
 
-            LoadProgressReporter.AdvanceFixedPhase("Loading RML Libraries...");
+            Engine.Current?.InitProgress?.SetSubphase("Loading RML Libraries...", true);
 
             try
             {
                 foreach (var file in GetAssemblyPaths("rml_libs"))
                 {
-                    LoadProgressReporter.SetSubphase(Path.GetFileNameWithoutExtension(file));
+                    Engine.Current?.InitProgress?.SetSubphase(Path.GetFileNameWithoutExtension(file), true);
 
                     try
                     {
@@ -117,22 +115,20 @@ namespace ResoniteModLoader
                     {
                         Logger.Warn(() => ex.Format($"Failed to load library from rml_libs: {file}"));
                     }
-
-                    LoadProgressReporter.ExitSubphase();
                 }
 
-                LoadProgressReporter.AdvanceFixedPhase("Collecting RML Mods...");
+                Engine.Current?.InitProgress?.SetSubphase("Collecting RML Mods...", true);
 
                 var rmlMods = await LoadModsAsync().ToArrayAsync();
 
-                LoadProgressReporter.AdvanceFixedPhase("Running RML Mods...");
+                Engine.Current?.InitProgress?.SetSubphase("Running RML Mods...", true);
                 await Task.Run(() => Mod.Loader.RunMods(rmlMods));
-                LoadProgressReporter.AdvanceFixedPhase("Done with RML");
+                Engine.Current?.InitProgress?.SetSubphase("Done with RML", true);
             }
             catch (Exception ex)
             {
                 Logger.Error(() => ex.Format("Exception in execution hook!"));
-                LoadProgressReporter.AdvanceFixedPhase("Error running RML Mods!");
+                Engine.Current?.InitProgress?.SetSubphase("Error running RML Mods!", true);
             }
         }
 
@@ -156,7 +152,7 @@ namespace ResoniteModLoader
             foreach (var modAssembly in modAssemblies)
             {
                 var fileName = Path.GetFileName(modAssembly.Location);
-                LoadProgressReporter.SetSubphase(modAssembly.GetName().Name!);
+                Engine.Current?.InitProgress?.SetSubphase(modAssembly.GetName().Name!, true);
 
                 RmlMod? rmlMod = null;
                 var success = true;
@@ -173,8 +169,6 @@ namespace ResoniteModLoader
                     success = false;
                     Logger.Warn(() => ex.Format($"Failed to load mod from rml_mods: {fileName}"));
                 }
-
-                LoadProgressReporter.ExitSubphase();
 
                 if (success)
                     yield return rmlMod!;
