@@ -133,7 +133,7 @@ namespace ResoniteModLoader
         /// <inheritdoc/>
         public override bool Run()
         {
-            Engine.Current?.InitProgress?.SetSubphase(Name, true);
+            LoadProgressReporter.SetSubphase(Name);
 
             try
             {

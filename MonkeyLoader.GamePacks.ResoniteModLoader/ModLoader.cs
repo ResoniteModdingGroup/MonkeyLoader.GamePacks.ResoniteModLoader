@@ -94,13 +94,13 @@ namespace ResoniteModLoader
         {
             await __result;
 
-            Engine.Current?.InitProgress?.SetSubphase("Loading RML Libraries...", true);
+            LoadProgressReporter.SetSubphase("Loading RML Libraries...");
 
             try
             {
                 foreach (var file in GetAssemblyPaths("rml_libs"))
                 {
-                    Engine.Current?.InitProgress?.SetSubphase(Path.GetFileNameWithoutExtension(file), true);
+                    LoadProgressReporter.SetSubphase(Path.GetFileNameWithoutExtension(file));
 
                     try
                     {
@@ -117,18 +117,18 @@ namespace ResoniteModLoader
                     }
                 }
 
-                Engine.Current?.InitProgress?.SetSubphase("Collecting RML Mods...", true);
+                LoadProgressReporter.SetSubphase("Collecting RML Mods...");
 
                 var rmlMods = await LoadModsAsync().ToArrayAsync();
 
-                Engine.Current?.InitProgress?.SetSubphase("Running RML Mods...", true);
+                LoadProgressReporter.SetSubphase("Running RML Mods...");
                 await Task.Run(() => Mod.Loader.RunMods(rmlMods));
-                Engine.Current?.InitProgress?.SetSubphase("Done with RML", true);
+                LoadProgressReporter.SetSubphase("Done with RML");
             }
             catch (Exception ex)
             {
                 Logger.Error(() => ex.Format("Exception in execution hook!"));
-                Engine.Current?.InitProgress?.SetSubphase("Error running RML Mods!", true);
+                LoadProgressReporter.SetSubphase("Error running RML Mods!");
             }
         }
 
@@ -152,7 +152,7 @@ namespace ResoniteModLoader
             foreach (var modAssembly in modAssemblies)
             {
                 var fileName = Path.GetFileName(modAssembly.Location);
-                Engine.Current?.InitProgress?.SetSubphase(modAssembly.GetName().Name!, true);
+                LoadProgressReporter.SetSubphase(modAssembly.GetName().Name!);
 
                 RmlMod? rmlMod = null;
                 var success = true;
