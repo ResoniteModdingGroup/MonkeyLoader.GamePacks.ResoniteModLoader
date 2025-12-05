@@ -67,7 +67,7 @@ namespace ResoniteModLoader
         public bool Failed { get; private set; }
 
         /// <inheritdoc/>
-        public IEnumerable<IFeaturePatch> FeaturePatches { get; } = Array.Empty<IFeaturePatch>();
+        public IEnumerable<IFeaturePatch> FeaturePatches { get; } = [];
 
         /// <inheritdoc/>
         public string FullId { get; }

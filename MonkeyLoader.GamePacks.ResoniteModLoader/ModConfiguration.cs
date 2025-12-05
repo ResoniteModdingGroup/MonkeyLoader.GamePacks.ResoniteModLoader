@@ -263,7 +263,7 @@ namespace ResoniteModLoader
         {
             Owner = owner;
             Version = configVersion;
-            ConfigurationItems = new(keys);
+            ConfigurationItems = [.. keys];
             AutoSave = autoSaveConfig;
         }
     }

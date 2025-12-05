@@ -20,7 +20,7 @@ namespace ResoniteModLoader
         /// <summary>
         /// Map of Assembly to ResoniteMod, used for logging purposes
         /// </summary>
-        internal static readonly Dictionary<Assembly, ResoniteMod> AssemblyLookupMap = new();
+        internal static readonly Dictionary<Assembly, ResoniteMod> AssemblyLookupMap = [];
 
         private static readonly Type _resoniteModType = typeof(ResoniteMod);
         private static readonly Uri _rmlIconUrl = new("https://avatars.githubusercontent.com/u/145755526");

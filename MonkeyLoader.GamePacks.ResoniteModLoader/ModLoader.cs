@@ -1,4 +1,4 @@
-using Elements.Core;
+﻿using Elements.Core;
 using FrooxEngine;
 using HarmonyLib;
 using MonkeyLoader;
@@ -102,7 +102,7 @@ namespace ResoniteModLoader
             {
                 foreach (var file in GetAssemblyPaths("rml_libs"))
                 {
-                    LoadProgressReporter.SetSubphase(Path.GetFileNameWithoutExtension(file));
+                    LoadProgressReporter.SetSubphase($"{Environment.NewLine}  {Path.GetFileNameWithoutExtension(file)}");
 
                     try
                     {
@@ -117,8 +117,6 @@ namespace ResoniteModLoader
                     {
                         Logger.Warn(() => ex.Format($"Failed to load library from rml_libs: {file}"));
                     }
-
-                    LoadProgressReporter.ExitSubphase();
                 }
 
                 LoadProgressReporter.AdvanceFixedPhase("Collecting RML Mods...");
@@ -156,7 +154,7 @@ namespace ResoniteModLoader
             foreach (var modAssembly in modAssemblies)
             {
                 var fileName = Path.GetFileName(modAssembly.Location);
-                LoadProgressReporter.SetSubphase(modAssembly.GetName().Name!);
+                LoadProgressReporter.SetSubphase($"{Environment.NewLine}  {modAssembly.GetName().Name!}");
 
                 RmlMod? rmlMod = null;
                 var success = true;
@@ -173,8 +171,6 @@ namespace ResoniteModLoader
                     success = false;
                     Logger.Warn(() => ex.Format($"Failed to load mod from rml_mods: {fileName}"));
                 }
-
-                LoadProgressReporter.ExitSubphase();
 
                 if (success)
                     yield return rmlMod!;

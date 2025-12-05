@@ -11,7 +11,7 @@
       <PackageId>MonkeyLoader.GamePacks.ResoniteModLoader</PackageId>
       <Title>ResoniteModLoader</Title>
       <Authors>Banane9, Nytra</Authors>
-      <Version>4.0.0.0</Version> <!-- We use the last digit for updates since RML uses the first three -->
+      <Version>4.0.0</Version> <!-- We use the last digit for updates since RML uses the first three -->
       <Description>This MonkeyLoader Game Pack for Resonite enables loading ResoniteModLoader mods as MonkeyLoader mods.</Description>
       <PackageReadmeFile>README.md</PackageReadmeFile>
       <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
@@ -33,16 +33,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.25.1-beta" GeneratePathProperty="true" />
-    <PackageReference Include="Resonite.Elements.Core" Version="1.4.9.4" />
-    <PackageReference Include="Resonite.Elements.Data" Version="1.0.6" />
-    <PackageReference Include="Resonite.FrooxEngine" Version="2025.8.28.607" />
+    <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.28.0-beta" GeneratePathProperty="true" />
+    <PackageReference Include="Resonite.Elements.Core" Version="1.4.10.4" PrivateAssets="all" />
+    <PackageReference Include="Resonite.Elements.Data" Version="1.0.7" PrivateAssets="all" />
+    <PackageReference Include="Resonite.FrooxEngine" Version="2025.11.31.1340" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- Reference the pre-patcher assembly from the Game Pack because PackageReference is stupid -->
     <Reference Include="MonkeyLoader.Resonite.Data">
-      <HintPath>$(PkgMonkeyLoader_GamePacks_Resonite)\lib\net9.0\pre-patchers\MonkeyLoader.Resonite.Data.dll</HintPath>
+      <HintPath>$(PkgMonkeyLoader_GamePacks_Resonite)\lib\net10.0\pre-patchers\MonkeyLoader.Resonite.Data.dll</HintPath>
     </Reference>
   </ItemGroup>
 
