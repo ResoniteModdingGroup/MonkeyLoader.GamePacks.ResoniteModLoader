@@ -42,17 +42,17 @@ namespace ResoniteModLoader
         /// <summary>
         /// Fail to read the config, and block saving over the config on disk.
         /// </summary>
-        ERROR,
+        ERROR = IncompatibleConfigHandling.Error,
 
         /// <summary>
         /// Destroy the saved config and start over from scratch.
         /// </summary>
-        CLOBBER,
+        CLOBBER = IncompatibleConfigHandling.Clobber,
 
         /// <summary>
         /// Ignore the version number and attempt to load the config from disk.
         /// </summary>
-        FORCELOAD,
+        FORCELOAD = IncompatibleConfigHandling.ForceLoad,
     }
 
     /// <summary>
@@ -80,6 +80,15 @@ namespace ResoniteModLoader
         internal ModConfiguration(ModConfigurationDefinition definition)
         {
             _definition = definition;
+        }
+
+        /// <inheritdoc/>
+        protected override IncompatibleConfigHandling HandleIncompatibleVersions(Version serializedVersion)
+        {
+            if (Owner is ResoniteMod resoniteMod)
+                return (IncompatibleConfigHandling)resoniteMod.HandleIncompatibleConfigurationVersions(serializedVersion, Version);
+
+            return base.HandleIncompatibleVersions(serializedVersion);
         }
 
         /// <summary>
