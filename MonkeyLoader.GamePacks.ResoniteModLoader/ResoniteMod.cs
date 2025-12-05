@@ -13,8 +13,12 @@ using System.Reflection;
 namespace ResoniteModLoader
 {
     /// <summary>
+    /// Base class for all mods.<br/>
     /// Contains members that only the <see cref="ModLoader"/> or the Mod itself are intended to access.
     /// </summary>
+    /// <remarks>
+    /// Inherit from this class when creating a new mod.
+    /// </remarks>
     public abstract class ResoniteMod : ResoniteModBase
     {
         private readonly Lazy<ModConfiguration?> _configuration;

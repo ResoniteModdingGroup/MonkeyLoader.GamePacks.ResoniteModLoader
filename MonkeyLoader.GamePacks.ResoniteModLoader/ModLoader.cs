@@ -30,7 +30,7 @@ namespace ResoniteModLoader
         /// </summary>
         public static readonly string VERSION = VERSION_CONSTANT;
 
-        internal const string VERSION_CONSTANT = "4.0.0";
+        internal const string VERSION_CONSTANT = "4.2.0";
 
         private static readonly Lazy<bool> _isHeadless = new(()
             => AppDomain.CurrentDomain.GetAssemblies()
