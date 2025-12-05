@@ -15,11 +15,11 @@ namespace ResoniteModLoader
     public class ModConfigurationDefinitionBuilder
     {
         private static readonly MethodInfo _addRangeComponentMethod = AccessTools.Method(typeof(ModConfigurationDefinitionBuilder), nameof(AddRangeComponent));
-        private static readonly string[] _definitiveEnabledToggles = new[] { "enabled", "mod enabled", "mod_enabled", "is_enabled" };
-        private static readonly string[] _indicativeEnabledToggles = new[] { "enabled" };
+        private static readonly string[] _definitiveEnabledToggles = ["enabled", "mod enabled", "mod_enabled", "is_enabled"];
+        private static readonly string[] _indicativeEnabledToggles = ["enabled"];
         private static readonly Type _modConfigKeyType = typeof(ModConfigurationKey);
 
-        private readonly HashSet<ModConfigurationKey> _keys = new();
+        private readonly HashSet<ModConfigurationKey> _keys = [];
         private readonly ResoniteModBase _owner;
 
         private bool _autoSaveConfig = true;
@@ -111,10 +111,9 @@ namespace ResoniteModLoader
 
             if (enabledToggle is null)
             {
-                potentialKeys = potentialKeys
+                potentialKeys = [.. potentialKeys
                     .Where(key => _indicativeEnabledToggles
-                        .Any(name => key.Name.Contains(name, StringComparison.OrdinalIgnoreCase)))
-                    .ToArray();
+                        .Any(name => key.Name.Contains(name, StringComparison.OrdinalIgnoreCase)))];
 
                 if (potentialKeys.Length != 1)
                     return false;
@@ -149,7 +148,7 @@ namespace ResoniteModLoader
                 _owner.Logger.Info(() => $"Found FrooxEngine.RangeAttribute on field {field.Name}");
                 var min = Convert.ChangeType(rangeAttribute.Min, fieldValue.ValueType());
                 var max = Convert.ChangeType(rangeAttribute.Max, fieldValue.ValueType());
-                _addRangeComponentMethod.MakeGenericMethod(fieldValue.ValueType()).Invoke(null, new object[] { fieldValue.UntypedKey, min, max });
+                _addRangeComponentMethod.MakeGenericMethod(fieldValue.ValueType()).Invoke(null, [fieldValue.UntypedKey, min, max]);
                 _owner.Logger.Info(() => $"Added ConfigKeyRange<{fieldValue.ValueType().Name}> component.");
             }
 

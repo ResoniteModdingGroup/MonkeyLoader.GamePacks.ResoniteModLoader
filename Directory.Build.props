@@ -1,9 +1,9 @@
 <Project>
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <AssemblyFileName>$(AssemblyTitle).dll</AssemblyFileName>
-    <LangVersion>11.0</LangVersion>
+    <LangVersion>13.0</LangVersion>
     <Nullable>enable</Nullable>
     <Deterministic>true</Deterministic>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
@@ -13,7 +13,6 @@
     <CopyToLibraries Condition="'$(CopyToLibraries)'==''">true</CopyToLibraries>
     
     <RestoreAdditionalProjectSources>
-      https://pkg.munally.com/MonkeyModdingTroop/index.json;
       https://nuget.pkg.github.com/ResoniteModdingGroup/index.json
     </RestoreAdditionalProjectSources>
   </PropertyGroup>
