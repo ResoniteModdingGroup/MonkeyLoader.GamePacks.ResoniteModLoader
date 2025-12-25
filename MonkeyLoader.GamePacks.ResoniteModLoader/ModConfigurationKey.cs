@@ -146,7 +146,7 @@ namespace ResoniteModLoader
 
         internal override IDefiningConfigKey UntypedKey => Key;
 
-        private ModConfiguration ModConfiguration => (ModConfiguration)Key.Section;
+        private ModConfiguration ModConfiguration => ((RmlModConfigSection)Key.Section).ModConfiguration;
 
         /// <summary>
         /// Creates a new instance of the <see cref="ModConfigurationKey{T}"/> class with the given parameters.
