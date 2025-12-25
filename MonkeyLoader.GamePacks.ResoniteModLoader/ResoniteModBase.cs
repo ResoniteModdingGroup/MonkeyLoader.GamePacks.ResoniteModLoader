@@ -19,10 +19,17 @@ namespace ResoniteModLoader
     /// </summary>
     public abstract class ResoniteModBase : IMonkey
     {
+        private readonly string _fullId;
+        private readonly Harmony _harmony;
+        private readonly Type _type;
+        private bool _failed;
         private Mod _mod = null!;
+        private bool _ran;
+        private ShutdownHandler? _shutdownDone;
+        private bool _shutdownRan;
+        private ShutdownHandler? _shuttingDown;
 
-        /// <inheritdoc/>
-        public AssemblyName AssemblyName { get; }
+        AssemblyName IMonkey.AssemblyName => AssemblyName;
 
         /// <summary>
         /// Gets the mod's author.
@@ -31,20 +38,13 @@ namespace ResoniteModLoader
 
         IEnumerable<string> IAuthorable.Authors => Author.Yield();
 
-        /// <inheritdoc/>
-        [MemberNotNullWhen(true, nameof(EnabledToggle))]
-        public bool CanBeDisabled => EnabledToggle is not null;
+        bool IMonkey.CanBeDisabled => CanBeDisabled;
 
-        /// <inheritdoc/>
-        public Config Config => Mod.Config;
+        Config IMonkey.Config => Config;
 
-        string? IDisplayable.Description => null;
+        string? IDisplayable.Description => "None";
 
-        /// <inheritdoc/>
-        public string? Description => "None";
-
-        /// <inheritdoc/>
-        public bool Enabled
+        bool IMonkey.Enabled
         {
             get => !CanBeDisabled || EnabledToggle.GetValue();
             set
@@ -60,44 +60,74 @@ namespace ResoniteModLoader
             }
         }
 
-        /// <inheritdoc/>
-        public IDefiningConfigKey<bool>? EnabledToggle { get; protected set; }
+        IDefiningConfigKey<bool>? IMonkey.EnabledToggle => EnabledToggle;
 
-        /// <inheritdoc/>
-        public bool Failed { get; private set; }
+        bool IRun.Failed => _failed;
 
-        /// <inheritdoc/>
-        public IEnumerable<IFeaturePatch> FeaturePatches { get; } = [];
+        IEnumerable<IFeaturePatch> IMonkey.FeaturePatches { get; } = [];
 
-        /// <inheritdoc/>
-        public string FullId { get; }
+        string IIdentifiable.FullId => _fullId;
 
-        /// <inheritdoc/>
-        public Harmony Harmony { get; }
+        Harmony IMonkey.Harmony => _harmony;
 
         bool IDisplayable.HasDescription => false;
 
-        /// <inheritdoc/>
-        public bool HasDescription => false;
-
-        /// <inheritdoc/>
-        public string Id => Name;
+        string IIdentifiable.Id => Name;
 
         /// <summary>
         /// Gets an optional hyperlink to the mod's homepage.
         /// </summary>
         public virtual string? Link { get; }
 
-        /// <inheritdoc/>
-        public Logger Logger => _mod.Logger;
+        Logger IMonkey.Logger => _mod.Logger;
+
+        Mod IMonkey.Mod => _mod;
+
+        /// <summary>
+        /// Gets the mod's name. This must be unique.
+        /// </summary>
+        public abstract string Name { get; }
+
+        Mod INestedIdentifiable<Mod>.Parent => _mod;
+
+        IIdentifiable INestedIdentifiable.Parent => _mod;
+
+        bool IRun.Ran => _ran;
+
+        bool IShutdown.ShutdownFailed => false;
+
+        bool IShutdown.ShutdownRan => _shutdownRan;
+
+        Type IMonkey.Type => _type;
+
+        /// <summary>
+        /// Gets the mod's semantic version.
+        /// </summary>
+        public abstract string Version { get; }
 
         /// <inheritdoc/>
-        public Mod Mod
+        internal AssemblyName AssemblyName { get; }
+
+        /// <inheritdoc/>
+        internal Config Config => Mod.Config;
+
+        /// <summary>
+        /// Gets the Mod's configuration.
+        /// </summary>
+        internal abstract ModConfiguration? Configuration { get; }
+
+        internal IDefiningConfigKey<bool>? EnabledToggle { get; set; }
+
+        /// <inheritdoc cref="IMonkey.Logger"/>
+        internal Logger Logger => _mod.Logger;
+
+        /// <inheritdoc cref="IMonkey.Mod"/>
+        internal Mod Mod
         {
             get => _mod;
 
             [MemberNotNull(nameof(_mod))]
-            internal set
+            set
             {
                 ArgumentNullException.ThrowIfNull(value);
 
@@ -111,51 +141,24 @@ namespace ResoniteModLoader
             }
         }
 
-        /// <summary>
-        /// Gets the mod's name. This must be unique.
-        /// </summary>
-        public abstract string Name { get; }
-
-        Mod INestedIdentifiable<Mod>.Parent => _mod;
-
-        IIdentifiable INestedIdentifiable.Parent => _mod;
-
-        /// <inheritdoc/>
-        public bool Ran { get; private set; }
-
-        /// <inheritdoc/>
-        public bool ShutdownFailed { get; private set; }
-
-        /// <inheritdoc/>
-        public bool ShutdownRan { get; private set; }
-
-        /// <inheritdoc/>
-        public Type Type { get; }
-
-        /// <summary>
-        /// Gets the mod's semantic version.
-        /// </summary>
-        public abstract string Version { get; }
-
-        /// <summary>
-        /// Gets the Mod's configuration.
-        /// </summary>
-        protected abstract ModConfiguration? Configuration { get; }
+        /// <inheritdoc cref="IMonkey.CanBeDisabled"/>
+        [MemberNotNullWhen(true, nameof(EnabledToggle))]
+        private bool CanBeDisabled => EnabledToggle is not null;
 
         /// <summary>
         /// Creates a new Resonite Mod instance.
         /// </summary>
         protected ResoniteModBase()
         {
-            Type = GetType();
-            AssemblyName = new(Type.Assembly.GetName().Name!);
+            _type = GetType();
+            AssemblyName = new(_type.Assembly.GetName().Name!);
 
-            FullId = $"RML.{Name}";
-            Harmony = new(FullId);
+            _fullId = $"RML.{Name}";
+            _harmony = new(_fullId);
         }
 
-        /// <inheritdoc/>
-        public int CompareTo(IMonkey? other) => Monkey.AscendingComparer.Compare(this, other);
+        int IComparable<IMonkey>.CompareTo(IMonkey? other)
+            => Monkey.AscendingComparer.Compare(this, other);
 
         /// <summary>
         /// Gets this mod's current <see cref="ModConfiguration" />.
@@ -166,18 +169,22 @@ namespace ResoniteModLoader
         public ModConfiguration? GetConfiguration() => Configuration;
 
         bool IAuthorable.HasAuthor(string name)
-                    => string.Equals(name, Author, StringComparison.InvariantCultureIgnoreCase);
+            => string.Equals(name, Author, StringComparison.InvariantCultureIgnoreCase);
 
-        /// <inheritdoc/>
-        public abstract bool Run();
-
-        /// <inheritdoc/>
-        public bool Shutdown(bool applicationExiting)
+        bool IRun.Run()
         {
-            if (ShutdownRan)
+            _ran = true;
+            _failed = !Run();
+
+            return !_failed;
+        }
+
+        bool IShutdown.Shutdown(bool applicationExiting)
+        {
+            if (_shutdownRan)
                 throw new InvalidOperationException("A monkey's Shutdown() method must only be called once!");
 
-            ShutdownRan = true;
+            _shutdownRan = true;
 
             Logger.Debug(() => "Running OnShutdown!");
             OnShuttingDown(applicationExiting);
@@ -187,7 +194,7 @@ namespace ResoniteModLoader
             OnShutdownDone(applicationExiting);
             Logger.Debug(() => "OnShutdown done!");
 
-            return !ShutdownFailed;
+            return true;
         }
 
         /// <inheritdoc/>
@@ -196,15 +203,18 @@ namespace ResoniteModLoader
         /// </remarks>
         public override string ToString() => $"{Mod.Title}/{Name}";
 
+        /// <inheritdoc cref="IRun.Run"/>
+        internal abstract bool Run();
+
         private void OnShutdownDone(bool applicationExiting)
         {
             try
             {
-                ShutdownDone?.TryInvokeAll(this, applicationExiting);
+                _shutdownDone?.TryInvokeAll(this, applicationExiting);
             }
             catch (AggregateException ex)
             {
-                Logger.Error(() => ex.Format($"Some {nameof(ShutdownDone)} event subscriber(s) threw an exception:"));
+                Logger.Error(() => ex.Format($"Some ShutdownDone event subscriber(s) threw an exception:"));
             }
         }
 
@@ -212,18 +222,24 @@ namespace ResoniteModLoader
         {
             try
             {
-                ShuttingDown?.TryInvokeAll(this, applicationExiting);
+                _shuttingDown?.TryInvokeAll(this, applicationExiting);
             }
             catch (AggregateException ex)
             {
-                Logger.Error(() => ex.Format($"Some {nameof(ShuttingDown)} event subscriber(s) threw an exception:"));
+                Logger.Error(() => ex.Format($"Some ShuttingDown event subscriber(s) threw an exception:"));
             }
         }
 
-        /// <inheritdoc/>
-        public event ShutdownHandler? ShutdownDone;
+        event ShutdownHandler? IShutdown.ShutdownDone
+        {
+            add => _shutdownDone += value;
+            remove => _shutdownDone -= value;
+        }
 
-        /// <inheritdoc/>
-        public event ShutdownHandler? ShuttingDown;
+        event ShutdownHandler? IShutdown.ShuttingDown
+        {
+            add => _shuttingDown += value;
+            remove => _shuttingDown -= value;
+        }
     }
 }
