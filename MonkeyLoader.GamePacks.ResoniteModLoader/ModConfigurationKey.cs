@@ -26,22 +26,22 @@ namespace ResoniteModLoader
         /// </summary>
         public string Name => NameProxy;
 
-        internal abstract IDefiningConfigKey UntypedKey { get; }
-
         /// <summary>
         /// Gets the proxied description from the <see cref="ModConfigurationKey{T}.Key"/>.
         /// </summary>
-        protected abstract string? DescriptionProxy { get; }
+        internal abstract string? DescriptionProxy { get; }
 
         /// <summary>
         /// Gets the proxied internal access only value from the <see cref="ModConfigurationKey{T}.Key"/>.
         /// </summary>
-        protected abstract bool InternalAccessOnlyProxy { get; }
+        internal abstract bool InternalAccessOnlyProxy { get; }
 
         /// <summary>
         /// Gets the proxied name from the <see cref="ModConfigurationKey{T}.Key"/>.
         /// </summary>
-        protected abstract string NameProxy { get; }
+        internal abstract string NameProxy { get; }
+
+        internal abstract IDefiningConfigKey UntypedKey { get; }
 
         internal ModConfigurationKey()
         { }
@@ -135,16 +135,16 @@ namespace ResoniteModLoader
             set => Key.SetValue(value!);
         }
 
+        /// <inheritdoc/>
+        internal override string? DescriptionProxy => Key.Description;
+
+        /// <inheritdoc/>
+        internal override bool InternalAccessOnlyProxy => Key.InternalAccessOnly;
+
+        /// <inheritdoc/>
+        internal override string NameProxy => Key.Id;
+
         internal override IDefiningConfigKey UntypedKey => Key;
-
-        /// <inheritdoc/>
-        protected override string? DescriptionProxy => Key.Description;
-
-        /// <inheritdoc/>
-        protected override bool InternalAccessOnlyProxy => Key.InternalAccessOnly;
-
-        /// <inheritdoc/>
-        protected override string NameProxy => Key.Id;
 
         private ModConfiguration ModConfiguration => (ModConfiguration)Key.Section;
 

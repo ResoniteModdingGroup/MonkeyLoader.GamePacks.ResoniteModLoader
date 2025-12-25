@@ -34,9 +34,7 @@ namespace ResoniteModLoader
 
         private static readonly Lazy<bool> _isHeadless = new(()
             => AppDomain.CurrentDomain.GetAssemblies()
-                .Where(assembly => assembly.GetName().Name?.StartsWith("FrooxEngine") ?? false)
-                .Any(assembly => assembly.DefinedTypes
-                    .Any(type => type.Namespace == "FrooxEngine.Headless")));
+                .Any(assembly => assembly.GetName().Name?.StartsWith("Resonite") ?? false));
 
         /// <summary>
         /// Gets whether this is running on a headless client.

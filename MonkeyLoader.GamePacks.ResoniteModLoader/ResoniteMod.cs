@@ -24,7 +24,7 @@ namespace ResoniteModLoader
         private readonly Lazy<ModConfiguration?> _configuration;
 
         /// <inheritdoc/>
-        protected override ModConfiguration? Configuration => _configuration.Value;
+        internal override ModConfiguration? Configuration => _configuration.Value;
 
         /// <inheritdoc/>
         protected ResoniteMod()
@@ -133,23 +133,6 @@ namespace ResoniteModLoader
         public virtual void OnEngineInit()
         { }
 
-        /// <inheritdoc/>
-        public override bool Run()
-        {
-            LoadProgressReporter.SetSubphase(Name);
-
-            try
-            {
-                OnEngineInit();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex.LogFormat($"Error while intitializing RML Mod {Name}:"));
-                return false;
-            }
-        }
-
         /// <summary>
         /// Get the <see cref="Logger"/> for the nearest <see cref="RmlMod"/> from the <paramref name="stackTrace"/>.
         /// </summary>
@@ -191,6 +174,23 @@ namespace ResoniteModLoader
                 EnabledToggle = enabledToggleKey;
 
             return builder.Build();
+        }
+
+        /// <inheritdoc/>
+        internal override bool Run()
+        {
+            LoadProgressReporter.SetSubphase(Name);
+
+            try
+            {
+                OnEngineInit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.LogFormat($"Error while intitializing RML Mod {Name}:"));
+                return false;
+            }
         }
 
         private static Func<object> Wrap(object message) => () => message;
