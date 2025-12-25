@@ -1,94 +1,36 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using EnumerableToolkit;
-using FrooxEngine;
-using HarmonyLib;
 using MonkeyLoader;
-using MonkeyLoader.Configuration;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace ResoniteModLoader
 {
     /// <summary>
-    /// Represents an interface for mod configurations.
-    /// </summary>
-    public interface IModConfigurationDefinition
-    {
-        /// <summary>
-        /// Gets the set of configuration keys defined in this configuration definition.
-        /// </summary>
-        ISet<ModConfigurationKey> ConfigurationItemDefinitions { get; }
-
-        /// <summary>
-        /// Gets the mod that owns this configuration definition.
-        /// </summary>
-        ResoniteModBase Owner { get; }
-
-        /// <summary>
-        /// Gets the semantic version for this configuration definition. This is used to check if the defined and saved configs are compatible.
-        /// </summary>
-        Version Version { get; }
-    }
-
-    /// <summary>
-    /// Defines options for the handling of incompatible configuration versions.
-    /// </summary>
-    public enum IncompatibleConfigurationHandlingOption
-    {
-        /// <summary>
-        /// Fail to read the config, and block saving over the config on disk.
-        /// </summary>
-        ERROR = IncompatibleConfigHandling.Error,
-
-        /// <summary>
-        /// Destroy the saved config and start over from scratch.
-        /// </summary>
-        CLOBBER = IncompatibleConfigHandling.Clobber,
-
-        /// <summary>
-        /// Ignore the version number and attempt to load the config from disk.
-        /// </summary>
-        FORCELOAD = IncompatibleConfigHandling.ForceLoad,
-    }
-
-    /// <summary>
     /// The configuration for a mod. Each mod has zero or one configuration. The configuration object will never be reassigned once initialized.
     /// </summary>
-    public class ModConfiguration : ConfigSection, IModConfigurationDefinition
+    public class ModConfiguration : IModConfigurationDefinition
     {
-        private readonly ModConfigurationDefinition _definition;
+        internal ModConfigurationDefinition Definition { get; }
+
+        /// <summary>
+        /// Gets the internal <see cref="MonkeyLoader.Configuration.ConfigSection"/>
+        /// that actually handles storing the data for this.
+        /// </summary>
+        internal RmlModConfigSection ConfigSection { get; }
 
         /// <inheritdoc/>
-        public ISet<ModConfigurationKey> ConfigurationItemDefinitions => _definition.ConfigurationItemDefinitions;
+        public Version Version => Definition.Version;
 
         /// <inheritdoc/>
-        public override string Description => "RML Mod Config";
+        public ISet<ModConfigurationKey> ConfigurationItemDefinitions => Definition.ConfigurationItemDefinitions;
 
         /// <inheritdoc/>
-        public override string Id => "values";
-
-        /// <inheritdoc/>
-        public ResoniteModBase Owner => _definition.Owner;
-
-        /// <inheritdoc/>
-        public override Version Version => _definition.Version;
+        public ResoniteModBase Owner => Definition.Owner;
 
         internal ModConfiguration(ModConfigurationDefinition definition)
         {
-            _definition = definition;
-        }
-
-        /// <inheritdoc/>
-        protected override IncompatibleConfigHandling HandleIncompatibleVersions(Version serializedVersion)
-        {
-            if (Owner is ResoniteMod resoniteMod)
-                return (IncompatibleConfigHandling)resoniteMod.HandleIncompatibleConfigurationVersions(serializedVersion, Version);
-
-            return base.HandleIncompatibleVersions(serializedVersion);
+            Definition = definition;
+            ConfigSection = new(this);
         }
 
         /// <summary>
@@ -97,7 +39,8 @@ namespace ResoniteModLoader
         /// <param name="key">The key to get the value for.</param>
         /// <returns>The value for the key.</returns>
         /// <exception cref="KeyNotFoundException">The given key does not exist in the configuration.</exception>
-        public object GetValue(ModConfigurationKey key) => GetDefinedKey(key.UntypedKey).GetValue()!;
+        public object GetValue(ModConfigurationKey key)
+            => ConfigSection.GetDefinedKey(key.UntypedKey).GetValue()!;
 
         /// <summary>
         /// Get a value, throwing a <see cref="KeyNotFoundException"/> if the key is not found.
@@ -106,14 +49,16 @@ namespace ResoniteModLoader
         /// <param name="key">The key to get the value for.</param>
         /// <returns>The value for the key.</returns>
         /// <exception cref="KeyNotFoundException">The given key does not exist in the configuration.</exception>
-        public T? GetValue<T>(ModConfigurationKey<T> key) => GetDefinedKey(key.Key).GetValue();
+        public T? GetValue<T>(ModConfigurationKey<T> key)
+            => ConfigSection.GetDefinedKey(key.Key).GetValue();
 
         /// <summary>
         /// Checks if the given key is defined in this config.
         /// </summary>
         /// <param name="key">The key to check.</param>
         /// <returns><c>true</c> if the key is defined.</returns>
-        public bool IsKeyDefined(ModConfigurationKey key) => TryGetDefinedKey(key.UntypedKey, out _);
+        public bool IsKeyDefined(ModConfigurationKey key)
+            => ConfigSection.TryGetDefinedKey(key.UntypedKey, out _);
 
         /// <summary>
         /// Persist this configuration to disk.<br/>
@@ -125,7 +70,8 @@ namespace ResoniteModLoader
         /// </remarks>
 #pragma warning disable IDE0060 // Remove unused parameter
 
-        public void Save(bool saveDefaultValues = false) => Config.Save();
+        public void Save(bool saveDefaultValues = false)
+            => ConfigSection.Config.Save();
 
 #pragma warning restore IDE0060 // Remove unused parameter
 
@@ -139,7 +85,7 @@ namespace ResoniteModLoader
         /// <exception cref="KeyNotFoundException">The given key does not exist in the configuration.</exception>
         /// <exception cref="ArgumentException">The new value is not valid for the given key.</exception>
         public void Set(ModConfigurationKey key, object? value, string? eventLabel = null)
-            => GetDefinedKey(key.UntypedKey).SetValue(value, eventLabel);
+            => ConfigSection.GetDefinedKey(key.UntypedKey).SetValue(value, eventLabel);
 
         /// <summary>
         /// Sets a configuration value for the given key, throwing a <see cref="KeyNotFoundException"/> if the key is not found
@@ -152,7 +98,7 @@ namespace ResoniteModLoader
         /// <exception cref="KeyNotFoundException">The given key does not exist in the configuration.</exception>
         /// <exception cref="ArgumentException">The new value is not valid for the given key.</exception>
         public void Set<T>(ModConfigurationKey<T> key, T value, string? eventLabel = null)
-            => GetDefinedKey(key.Key).SetValue(value, eventLabel);
+            => ConfigSection.GetDefinedKey(key.Key).SetValue(value, eventLabel);
 
         /// <summary>
         /// Tries to get a value, returning <c>default</c> if the key is not found.
@@ -162,7 +108,7 @@ namespace ResoniteModLoader
         /// <returns><c>true</c> if the value was read successfully.</returns>
         public bool TryGetValue(ModConfigurationKey key, out object? value)
         {
-            if (TryGetDefinedKey(key.UntypedKey, out var definingKey))
+            if (ConfigSection.TryGetDefinedKey(key.UntypedKey, out var definingKey))
             {
                 value = definingKey.GetValue();
                 return true;
@@ -180,7 +126,7 @@ namespace ResoniteModLoader
         /// <returns><c>true</c> if the value was read successfully.</returns>
         public bool TryGetValue<T>(ModConfigurationKey<T> key, out T? value)
         {
-            if (TryGetDefinedKey(key.Key, out var definingKey))
+            if (ConfigSection.TryGetDefinedKey(key.Key, out var definingKey))
             {
                 value = definingKey.GetValue();
                 return true;
@@ -196,7 +142,8 @@ namespace ResoniteModLoader
         /// <param name="key">The key to remove the value for.</param>
         /// <returns><c>true</c> if a value was successfully found and removed, <c>false</c> if there was no value to remove.</returns>
         /// <exception cref="KeyNotFoundException">The given key does not exist in the configuration.</exception>
-        public bool Unset(ModConfigurationKey key) => GetDefinedKey(key.UntypedKey).Unset();
+        public bool Unset(ModConfigurationKey key)
+            => ConfigSection.GetDefinedKey(key.UntypedKey).Unset();
 
         internal void FireConfigurationChangedEvent(ModConfigurationKey key, string? label)
         {
@@ -208,7 +155,7 @@ namespace ResoniteModLoader
             }
             catch (AggregateException ex)
             {
-                Config.Logger.Error(() => ex.Format($"An OnAnyConfigurationChanged event subscriber threw an exception:"));
+                ConfigSection.Config.Logger.Error(() => ex.Format($"An OnAnyConfigurationChanged event subscriber threw an exception:"));
             }
 
             try
@@ -217,13 +164,9 @@ namespace ResoniteModLoader
             }
             catch (AggregateException ex)
             {
-                Config.Logger.Error(() => ex.Format($"An OnThisConfigurationChanged event subscriber threw an exception:"));
+                ConfigSection.Config.Logger.Error(() => ex.Format($"An OnThisConfigurationChanged event subscriber threw an exception:"));
             }
         }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<IDefiningConfigKey> GetConfigKeys()
-            => _definition.ConfigurationItemDefinitions.Select(item => item.UntypedKey);
 
         /// <summary>
         /// Called if any config value for any mod changed.
@@ -240,40 +183,5 @@ namespace ResoniteModLoader
         /// Called if one of the values in this mod's config changed.
         /// </summary>
         public event ConfigurationChangedHandler? OnThisConfigurationChanged;
-    }
-
-    /// <summary>
-    /// Defines a mod configuration. This should be defined by a <see cref="ResoniteMod"/> using the <see cref="ResoniteMod.DefineConfiguration(ModConfigurationDefinitionBuilder)"/> method.
-    /// </summary>
-    public class ModConfigurationDefinition : IModConfigurationDefinition
-    {
-        internal readonly HashSet<ModConfigurationKey> ConfigurationItems;
-        internal bool AutoSave;
-
-        /// <inheritdoc/>
-        // clone the collection because I don't trust giving public API users shallow copies one bit
-        public ISet<ModConfigurationKey> ConfigurationItemDefinitions
-            => new HashSet<ModConfigurationKey>(ConfigurationItems);
-
-        /// <inheritdoc/>
-        public ResoniteModBase Owner { get; private set; }
-
-        /// <inheritdoc/>
-        public Version Version { get; private set; }
-
-        /// <summary>
-        /// Creates a new <see cref="ModConfiguration"/> definition.
-        /// </summary>
-        /// <param name="owner">The mod owning the config.</param>
-        /// <param name="configVersion">The version of the config.</param>
-        /// <param name="keys">The config keys for the config.</param>
-        /// <param name="autoSaveConfig">Whether to automatically save the config.</param>
-        public ModConfigurationDefinition(ResoniteModBase owner, Version configVersion, HashSet<ModConfigurationKey> keys, bool autoSaveConfig)
-        {
-            Owner = owner;
-            Version = configVersion;
-            ConfigurationItems = [.. keys];
-            AutoSave = autoSaveConfig;
-        }
     }
 }

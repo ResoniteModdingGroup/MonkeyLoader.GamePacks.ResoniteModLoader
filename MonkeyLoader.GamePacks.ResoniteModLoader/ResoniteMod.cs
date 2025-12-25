@@ -34,7 +34,10 @@ namespace ResoniteModLoader
                 if (BuildConfigurationDefinition() is not ModConfigurationDefinition definition)
                     return null;
 
-                return Config.LoadSection(new ModConfiguration(definition));
+                var modConfiguration = new ModConfiguration(definition);
+                Config.LoadSection(modConfiguration.ConfigSection);
+
+                return modConfiguration;
             });
         }
 
