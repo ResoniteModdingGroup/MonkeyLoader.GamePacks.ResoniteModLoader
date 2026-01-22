@@ -1,9 +1,11 @@
-﻿<Project Sdk="Remora.Resonite.Sdk/2.0.3">
+﻿<Project Sdk="Remora.Resonite.Sdk/2.0.10">
   <PropertyGroup>
     <AssemblyTitle>ResoniteModLoader</AssemblyTitle>
     <AssemblyName>ResoniteModLoader</AssemblyName>
     <RootNamespace>ResoniteModLoader</RootNamespace>
 
+    <!-- We have to do the references manually and hide them,
+    as otherwise all of ML and the Integration will get pulled into RML projects referencing this.-->
     <IsMonkeyLoaderGamePack>true</IsMonkeyLoaderGamePack>
   </PropertyGroup>
 

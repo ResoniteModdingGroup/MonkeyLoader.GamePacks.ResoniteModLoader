@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <ResoniteInstallOnBuild Condition="'$(CopyToLibraries)'==''">true</ResoniteInstallOnBuild>
+    <ResoniteInstallOnBuild Condition="'$(ResoniteInstallOnBuild)'==''">true</ResoniteInstallOnBuild>
 
     <RestoreAdditionalProjectSources>
       https://nuget.pkg.github.com/ResoniteModdingGroup/index.json

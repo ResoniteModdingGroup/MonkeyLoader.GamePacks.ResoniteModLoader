@@ -1,10 +1,7 @@
 using FrooxEngine;
 using HarmonyLib;
 using MonkeyLoader.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
 
 namespace ResoniteModLoader

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ResoniteModLoader
+﻿namespace ResoniteModLoader
 {
     /// <summary>
     /// Represents an <see cref="Exception"/> encountered while loading a mod's configuration file.
