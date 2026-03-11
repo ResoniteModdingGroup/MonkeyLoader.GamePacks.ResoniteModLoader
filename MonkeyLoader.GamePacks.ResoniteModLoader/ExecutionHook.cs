@@ -41,7 +41,7 @@ namespace ResoniteModLoader
 
         public Task<bool> Initialize(PlatformInterface platformInterface)
         {
-            ModLoader.Logger.Debug(() => "Initialize() from platformInterface");
+            ModLoaderHook.Logger.Debug(() => "Initialize() from platformInterface");
             Platform = platformInterface;
             return Task.FromResult(true);
         }

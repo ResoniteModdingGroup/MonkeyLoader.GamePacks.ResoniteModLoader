@@ -15,7 +15,7 @@
     <Authors>Banane9, Nytra</Authors>
     
     <!-- We use the fourth digit for updates since RML uses the first three -->
-    <Version>4.2.0.1</Version>
+    <Version>5.0.1</Version>
     
     <Description>This MonkeyLoader Game Pack for Resonite enables loading ResoniteModLoader mods as MonkeyLoader mods.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -35,17 +35,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.29.0" GeneratePathProperty="true" PrivateAssets="all" />
-
     <ResoniteReference Include="Elements.Core" />
     <ResoniteReference Include="Elements.Data" />
+    <ResoniteReference Include="Elements.Assets" />
     <ResoniteReference Include="FrooxEngine" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <!-- Reference the pre-patcher assembly from the Game Pack because PackageReference is stupid -->
-    <Reference Include="MonkeyLoader.Resonite.Data">
-      <HintPath>$(PkgMonkeyLoader_GamePacks_Resonite)\lib\net10.0\pre-patchers\MonkeyLoader.Resonite.Data.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>
