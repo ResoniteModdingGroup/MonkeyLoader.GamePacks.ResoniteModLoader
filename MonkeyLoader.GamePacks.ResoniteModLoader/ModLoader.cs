@@ -1,14 +1,4 @@
 ﻿using Elements.Core;
-using FrooxEngine;
-using HarmonyLib;
-using MonkeyLoader;
-using MonkeyLoader.Meta;
-using MonkeyLoader.NuGet;
-using MonkeyLoader.Patching;
-using MonkeyLoader.Resonite;
-using MonkeyLoader.Resonite.Features.FrooxEngine;
-using NuGet.Packaging.Core;
-using NuGet.Versioning;
 using System.Reflection;
 
 namespace ResoniteModLoader
@@ -16,9 +6,7 @@ namespace ResoniteModLoader
     /// <summary>
     /// Contains the actual mod loader.
     /// </summary>
-    [HarmonyPatchCategory(nameof(ModLoader))]
-    [HarmonyPatch(typeof(EngineInitializer), nameof(EngineInitializer.InitializeFrooxEngine))]
-    public sealed class ModLoader : ResoniteMonkey<ModLoader>
+    public sealed class ModLoader
     {
         /// <summary>
         /// ResoniteModLoader's version
@@ -29,7 +17,18 @@ namespace ResoniteModLoader
 
         private static readonly Lazy<bool> _isHeadless = new(()
             => AppDomain.CurrentDomain.GetAssemblies()
-                .Any(assembly => assembly.GetName().Name?.StartsWith("Resonite") ?? false));
+                .SelectMany(static assembly =>
+                {
+                    try
+                    {
+                        return assembly.GetTypes();
+                    }
+                    catch (ReflectionTypeLoadException typeLoadException)
+                    {
+                        return typeLoadException.Types ?? [];
+                    }
+                })
+                .Any(static type => type?.Namespace is "FrooxEngine.Headless"));
 
         /// <summary>
         /// Gets whether this is running on a headless client.
@@ -37,137 +36,13 @@ namespace ResoniteModLoader
         /// <value><c>true</c> if ResoniteModLoader was loaded by a headless; otherwise, <c>false</c>.</value>
         public static bool IsHeadless => _isHeadless.Value;
 
-        /// <inheritdoc/>
-        public override string Name { get; } = "ModLoader";
-
         /// <summary>
-        /// Allows reading metadata for all loaded mods
+        /// Allows reading metadata for all loaded mods.
         /// </summary>
-        /// <returns>A new list containing each loaded mod</returns>
+        /// <returns>A sequence of all loaded <see cref="ResoniteModBase">resonite mods</see>.</returns>
         public static IEnumerable<ResoniteModBase> Mods()
-        {
-            return Mod.Loader.RegularMods
-                .OfType<RmlMod>()
+            => ModLoaderHook.RmlMods
                 .SelectMany(rmlMod => rmlMod.Monkeys)
                 .Cast<ResoniteModBase>();
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<IFeaturePatch> GetFeaturePatches()
-        {
-            yield return new FeaturePatch<EngineInitialization>(PatchCompatibility.HookOnly);
-        }
-
-        /// <inheritdoc/>
-        protected override bool OnEngineInit()
-        {
-            LoadProgressReporter.AddFixedPhases(4);
-
-            return base.OnEngineInit();
-        }
-
-        /// <inheritdoc/>
-        protected override bool OnEngineReady() => true;
-
-        /// <inheritdoc/>
-        protected override bool OnLoaded() => base.OnEngineReady();
-
-        private static IEnumerable<string> GetAssemblyPaths(string root)
-        {
-            if (!Directory.Exists(root))
-                yield break;
-
-            foreach (var file in Directory.EnumerateFiles(root, "*.dll"))
-            {
-                if (Path.GetExtension(file).Equals(".dll", StringComparison.OrdinalIgnoreCase))
-                    yield return file;
-            }
-        }
-
-        [HarmonyPostfix]
-        private static async Task InitializeFrooxEnginePostfixAsync(Task __result)
-        {
-            await __result;
-
-            LoadProgressReporter.AdvanceFixedPhase("Loading RML Libraries...");
-
-            try
-            {
-                foreach (var file in GetAssemblyPaths("rml_libs"))
-                {
-                    LoadProgressReporter.SetSubphase($"{Environment.NewLine}  {Path.GetFileNameWithoutExtension(file)}");
-
-                    try
-                    {
-                        var assembly = Mod.Loader.AssemblyLoadStrategy.LoadFile(Path.GetFullPath(file));
-                        var name = assembly.GetName();
-
-                        Mod.Loader.NuGet.Add(new LoadedNuGetPackage(new PackageIdentity(name.Name, new NuGetVersion(name.Version!)), NuGetHelper.Framework));
-
-                        Logger.Info(() => $"Loaded library {name.Name}.{name.Version} from rml_libs: {file}");
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Warn(() => ex.Format($"Failed to load library from rml_libs: {file}"));
-                    }
-                }
-
-                LoadProgressReporter.AdvanceFixedPhase("Collecting RML Mods...");
-
-                var rmlMods = await LoadModsAsync().ToArrayAsync();
-
-                LoadProgressReporter.AdvanceFixedPhase("Running RML Mods...");
-                await Task.Run(() => Mod.Loader.RunMods(rmlMods));
-                LoadProgressReporter.AdvanceFixedPhase("Done with RML");
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(() => ex.Format("Exception in execution hook!"));
-                LoadProgressReporter.AdvanceFixedPhase("Error running RML Mods!");
-            }
-        }
-
-        private static async IAsyncEnumerable<RmlMod> LoadModsAsync()
-        {
-            var modAssemblies = new List<Assembly>();
-
-            foreach (var file in GetAssemblyPaths("rml_mods"))
-            {
-                try
-                {
-                    var modAssembly = await Task.Run(() => Mod.Loader.AssemblyLoadStrategy.LoadFile(Path.GetFullPath(file!)));
-                    modAssemblies.Add(modAssembly);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn(() => ex.Format($"Failed to load assembly from rml_mods: {file}"));
-                }
-            }
-
-            foreach (var modAssembly in modAssemblies)
-            {
-                var fileName = Path.GetFileName(modAssembly.Location);
-                LoadProgressReporter.SetSubphase($"{Environment.NewLine}  {modAssembly.GetName().Name!}");
-
-                RmlMod? rmlMod = null;
-                var success = true;
-
-                try
-                {
-                    rmlMod = new RmlMod(Mod.Loader, modAssembly);
-                    Logger.Info(() => $"Loaded mod from rml_mods: {fileName}");
-
-                    Mod.Loader.AddMod(rmlMod);
-                }
-                catch (Exception ex)
-                {
-                    success = false;
-                    Logger.Warn(() => ex.Format($"Failed to load mod from rml_mods: {fileName}"));
-                }
-
-                if (success)
-                    yield return rmlMod!;
-            }
-        }
     }
 }

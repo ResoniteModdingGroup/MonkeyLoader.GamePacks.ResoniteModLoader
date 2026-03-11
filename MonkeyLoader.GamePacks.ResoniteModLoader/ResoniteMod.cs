@@ -154,7 +154,7 @@ namespace ResoniteModLoader
                 }
             }
 
-            return ModLoader.Logger;
+            return ModLoaderHook.Logger;
         }
 
         /// <summary>

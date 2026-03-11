@@ -19,9 +19,8 @@ namespace ResoniteModLoader
         internal static readonly Dictionary<Assembly, ResoniteMod> AssemblyLookupMap = [];
 
         private static readonly Type _resoniteModType = typeof(ResoniteMod);
-        private static readonly Uri _rmlIconUrl = new("https://avatars.githubusercontent.com/u/145755526");
 
-        private readonly Assembly _assembly;
+        private static readonly Uri _rmlIconUrl = new("https://avatars.githubusercontent.com/u/145755526");
 
         ///<inheritdoc/>
         public override string Description => "RML Mods don't have descriptions.";
@@ -50,13 +49,24 @@ namespace ResoniteModLoader
         ///<inheritdoc/>
         public override NuGetFramework TargetFramework => NuGetHelper.Framework;
 
+        /// <summary>
+        /// Gets the <see cref="System.Reflection.Assembly"/> this mod is defined in.
+        /// </summary>
+        internal Assembly Assembly { get; }
+
+        /// <summary>
+        /// Gets whether this mod's <see cref="System.Reflection.Assembly"/> contains locale
+        /// <see cref="Assembly.GetManifestResourceNames">resources</see>.
+        /// </summary>
+        internal bool IsLocalized { get; }
+
         ///<inheritdoc/>
         public RmlMod(MonkeyLoader.MonkeyLoader loader, Assembly assembly)
             : base(loader, assembly.Location, false)
         {
             FileSystem = new MemoryFileSystem() { Name = $"Dummy FileSystem for {assembly.GetName().Name}" };
 
-            _assembly = assembly;
+            Assembly = assembly;
             var modType = assembly.GetTypes().Single(_resoniteModType.IsAssignableFrom);
             var resoniteMod = (ResoniteMod)Activator.CreateInstance(modType)!;
 
@@ -81,18 +91,23 @@ namespace ResoniteModLoader
             // Add dependencies after refactoring MKL
             //foreach (var referencedAssembly in assembly.GetReferencedAssemblies())
             //    dependencies.Add(referencedAssembly.Name, new DependencyReference())
+
+            var localePrefix = $"{modType.Namespace}.Locale.";
+
+            IsLocalized = assembly.GetManifestResourceNames()
+                .Any(name => name.StartsWith(localePrefix, StringComparison.OrdinalIgnoreCase) && name.EndsWith(".json", StringComparison.OrdinalIgnoreCase));
         }
 
         public override bool TryResolveAssembly(AssemblyName assemblyName, [NotNullWhen(true)] out Assembly? assembly)
         {
-            if (assemblyName.Name != _assembly.GetName().FullName)
+            if (assemblyName.Name != Assembly.GetName().FullName)
             {
                 assembly = null;
                 return false;
             }
 
-            Logger.Debug(() => $"Resolving assembly {assemblyName.Name} to {_assembly.FullName} through RmlMod");
-            assembly = _assembly;
+            Logger.Debug(() => $"Resolving assembly {assemblyName.Name} to {Assembly.FullName} through RmlMod");
+            assembly = Assembly;
             return true;
         }
 
