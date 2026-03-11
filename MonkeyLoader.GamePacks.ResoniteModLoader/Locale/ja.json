@@ -2,6 +2,22 @@
   "localeCode": "ja",
   "authors": [ "kazu" ],
   "messages": {
-    "MonkeyLoader.GamePacks.ResoniteModLoader.ModLoader.Description": "Resonite Mod Loader (RML) ライブラリ 及び モッド を通常の場所から読み込めるようにします。"
+    "MonkeyLoader.GamePacks.ResoniteModLoader.ModLoader.Description": "ResoniteModLoader (RML) ライブラリ 及び モッド を通常の場所から読み込めるようにします。",
+
+    "Settings.Category.ResoniteModLoader": "ResoniteModLoader",
+    "Settings.ModLoaderSettings": "ResoniteModLoader 設定",
+
+    "Settings.ModLoaderSettings.DebugMode": "デバッグログを有効化",
+    "Settings.ModLoaderSettings.DebugMode.Description": "デバッグログを記録するようにします。",
+    "Settings.ModLoaderSettings.HideVisuals": "表示を隠す",
+    "Settings.ModLoaderSettings.HideVisuals.Description": "起動時に表示される Modloader の読み込み表示を隠します。",
+    "Settings.ModLoaderSettings.LoadedMods": "読み込まれた Mod",
+    "Settings.ModLoaderSettings.ModLoaderVersion": "バージョン",
+
+    "Settings.ModLoaderDebugSettings": "デバック設定",
+    "Settings.ModLoaderDebugSettings.RefreshLocale": "ロケールを更新",
+    "Settings.ModLoaderDebugSettings.LocaleCount": "ロケールキーを数える",
+    "Settings.ModLoaderDebugSettings.LocaleKeyCount": "ロケールの個数",
+    "Settings.ModLoaderDebugSettings.ForceAssetUpdate": "アセットを強制的に更新"
   }
 }
