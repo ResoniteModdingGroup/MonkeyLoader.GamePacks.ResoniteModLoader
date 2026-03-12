@@ -39,5 +39,11 @@
     <ResoniteReference Include="Elements.Data" />
     <ResoniteReference Include="Elements.Assets" />
     <ResoniteReference Include="FrooxEngine" />
+
+    <PackageReference Include="MonkeyLoader.GamePacks.Resonite" Version="0.30.0" GeneratePathProperty="true" PrivateAssets="all" />
+    <!-- Reference the pre-patcher assembly from the Game Pack because PackageReference is stupid -->
+    <Reference Include="MonkeyLoader.Resonite.Data">
+      <HintPath>$(PkgMonkeyLoader_GamePacks_Resonite)\lib\net10.0\pre-patchers\MonkeyLoader.Resonite.Data.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
