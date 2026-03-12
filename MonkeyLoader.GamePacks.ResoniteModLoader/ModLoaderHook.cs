@@ -11,6 +11,7 @@ using MonkeyLoader.Resonite.Locale;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text.Json;
 
 namespace ResoniteModLoader
@@ -110,6 +111,21 @@ namespace ResoniteModLoader
         /// <inheritdoc/>
         protected override bool OnLoaded() => base.OnEngineReady();
 
+        private static string GenerateSHA256(string filepath)
+        {
+            try
+            {
+                using var hasher = SHA256.Create();
+                using var stream = File.OpenRead(filepath);
+
+                return Convert.ToHexString(hasher.ComputeHash(stream));
+            }
+            catch
+            {
+                return "Failed to generate hash";
+            }
+        }
+
         private static IEnumerable<string> GetAssemblyPaths(string root)
         {
             if (!Directory.Exists(root))
@@ -167,22 +183,24 @@ namespace ResoniteModLoader
 
         private static async IAsyncEnumerable<RmlMod> LoadModsAsync()
         {
-            var modAssemblies = new List<Assembly>();
+            var modAssemblies = new List<(Assembly, string)>();
 
             foreach (var file in GetAssemblyPaths("rml_mods"))
             {
+                var hash = GenerateSHA256(file);
+
                 try
                 {
                     var modAssembly = await Task.Run(() => Mod.Loader.AssemblyLoadStrategy.LoadFile(Path.GetFullPath(file!)));
-                    modAssemblies.Add(modAssembly);
+                    modAssemblies.Add((modAssembly, hash));
                 }
                 catch (Exception ex)
                 {
-                    Logger.Warn(() => ex.Format($"Failed to load assembly from rml_mods: {file}"));
+                    Logger.Warn(() => ex.Format($"Failed to load assembly from rml_mods: {file} with SHA256: {hash}"));
                 }
             }
 
-            foreach (var modAssembly in modAssemblies)
+            foreach (var (modAssembly, hash) in modAssemblies)
             {
                 var fileName = Path.GetFileName(modAssembly.Location);
                 LoadProgressReporter.SetSubphase($"{Environment.NewLine}  {modAssembly.GetName().Name!}");
@@ -193,7 +211,7 @@ namespace ResoniteModLoader
                 try
                 {
                     rmlMod = new RmlMod(Mod.Loader, modAssembly);
-                    Logger.Info(() => $"Loaded mod from rml_mods: {fileName}");
+                    Logger.Info(() => $"Loaded mod [{rmlMod.Id}/{rmlMod.Version}] ({fileName}) by {rmlMod.Authors.Join()} with SHA256: {hash}");
 
                     Mod.Loader.AddMod(rmlMod);
                 }
