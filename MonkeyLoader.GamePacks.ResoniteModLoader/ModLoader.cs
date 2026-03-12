@@ -13,7 +13,7 @@ namespace ResoniteModLoader
         /// </summary>
         public static readonly string VERSION = VERSION_CONSTANT;
 
-        internal const string VERSION_CONSTANT = "4.2.0";
+        internal const string VERSION_CONSTANT = "5.0.1";
 
         private static readonly Lazy<bool> _isHeadless = new(()
             => AppDomain.CurrentDomain.GetAssemblies()
@@ -41,8 +41,6 @@ namespace ResoniteModLoader
         /// </summary>
         /// <returns>A sequence of all loaded <see cref="ResoniteModBase">resonite mods</see>.</returns>
         public static IEnumerable<ResoniteModBase> Mods()
-            => ModLoaderHook.RmlMods
-                .SelectMany(rmlMod => rmlMod.Monkeys)
-                .Cast<ResoniteModBase>();
+            => ModLoaderHook.ResoniteMods;
     }
 }

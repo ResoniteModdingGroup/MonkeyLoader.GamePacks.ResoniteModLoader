@@ -1,5 +1,4 @@
 ﻿using Elements.Assets;
-using Elements.Core;
 using FrooxEngine;
 using HarmonyLib;
 using MonkeyLoader;
@@ -19,10 +18,25 @@ namespace ResoniteModLoader
     /// <summary>
     /// Contains the actual mod loading hook executed by MonkeyLoader.
     /// </summary>
-    [HarmonyPatchCategory(nameof(ModLoader))]
+    [HarmonyPatchCategory(nameof(ModLoaderHook))]
     [HarmonyPatch(typeof(EngineInitializer), nameof(EngineInitializer.InitializeFrooxEngine))]
     internal sealed class ModLoaderHook : ResoniteAsyncEventHandlerMonkey<ModLoaderHook, LocaleLoadingEvent>
     {
+        /// <summary>
+        /// Gets a sequence of all currently loaded <see cref="RmlMod.IsLocalized">localized</see> <see cref="ResoniteModBase"/>s.
+        /// </summary>
+        public static IEnumerable<ResoniteModBase> LocalizedResoniteMods
+            => RmlMods.Where(static rmlMod => rmlMod.IsLocalized)
+                .SelectMany(static rmlMod => rmlMod.Monkeys)
+                .Cast<ResoniteModBase>();
+
+        /// <summary>
+        /// Gets a sequence of all currently loaded <see cref="ResoniteModBase"/>s.
+        /// </summary>
+        public static IEnumerable<ResoniteModBase> ResoniteMods
+            => RmlMods.SelectMany(static rmlMod => rmlMod.Monkeys)
+                .Cast<ResoniteModBase>();
+
         /// <summary>
         /// Gets a sequence of all currently loaded <see cref="RmlMod"/>s.
         /// </summary>
@@ -45,11 +59,16 @@ namespace ResoniteModLoader
         /// </summary>
         protected override async Task Handle(LocaleLoadingEvent eventData)
         {
-            foreach (var mod in RmlMods.Where(static mod => mod.IsLocalized))
-            {
-                var localeResourceName = $"{mod.GetType().Namespace}.Locale.{eventData.LocaleCode}.json";
+            // We don't need to load the ResoniteModLoader locale here, as that will be handled by the ML Resonite Integration
+            // However the files are also included as embedded resources for completeness and compatibility with the reference
 
-                var realName = mod.Assembly.GetManifestResourceNames()
+            foreach (var mod in LocalizedResoniteMods)
+            {
+                var type = mod.GetType();
+                var assembly = type.Assembly;
+                var localeResourceName = $"{type.Namespace}.Locale.{eventData.LocaleCode}.json";
+
+                var realName = assembly.GetManifestResourceNames()
                     .FirstOrDefault(resourceName => localeResourceName.Equals(resourceName, StringComparison.OrdinalIgnoreCase));
 
                 if (realName is null)
@@ -57,7 +76,7 @@ namespace ResoniteModLoader
 
                 try
                 {
-                    if (mod.Assembly.GetManifestResourceStream(realName) is not System.IO.Stream resourceStream)
+                    if (assembly.GetManifestResourceStream(realName) is not System.IO.Stream resourceStream)
                         continue;
 
                     var localeData = await JsonSerializer.DeserializeAsync<LocaleData>(resourceStream);
@@ -66,13 +85,13 @@ namespace ResoniteModLoader
                         continue;
 
                     if (!eventData.LocaleCode.Equals(localeData.LocaleCode, StringComparison.OrdinalIgnoreCase))
-                        Logger.Warn(() => $"Detected locale data with wrong locale code from locale resource! Wanted [{eventData.LocaleCode}] - got [{localeData.LocaleCode}] in file: {mod.Id}:{realName}");
+                        Logger.Warn(() => $"Detected locale data with wrong locale code from locale resource! Wanted [{eventData.LocaleCode}] - got [{localeData.LocaleCode}] in file: {mod.Mod.Id}:{realName}");
 
                     eventData.LocaleResource.LoadDataAdditively(localeData);
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(() => ex.Format($"Failed to deserialize resource as LocaleData: {mod.Id}:{realName}"));
+                    Logger.Error(() => ex.Format($"Failed to deserialize resource as LocaleData: {mod.Mod.Id}:{realName}"));
                 }
             }
         }
