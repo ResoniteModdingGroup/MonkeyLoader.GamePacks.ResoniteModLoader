@@ -1,15 +1,6 @@
 <Project>
   <PropertyGroup>
     <ResoniteInstallOnBuild Condition="'$(ResoniteInstallOnBuild)'==''">true</ResoniteInstallOnBuild>
-
-    <RestoreAdditionalProjectSources>
-      https://nuget.pkg.github.com/ResoniteModdingGroup/index.json
-    </RestoreAdditionalProjectSources>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
