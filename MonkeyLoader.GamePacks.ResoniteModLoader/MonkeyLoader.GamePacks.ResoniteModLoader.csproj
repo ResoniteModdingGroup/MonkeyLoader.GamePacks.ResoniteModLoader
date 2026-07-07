@@ -1,4 +1,4 @@
-﻿<Project Sdk="Remora.Resonite.Sdk/2.3.0">
+﻿<Project Sdk="Remora.Resonite.Sdk/2.3.1">
   <PropertyGroup>
     <AssemblyTitle>ResoniteModLoader</AssemblyTitle>
     <AssemblyName>ResoniteModLoader</AssemblyName>
@@ -16,7 +16,7 @@
     <Authors>Banane9;Nytra</Authors>
     
     <!-- We use the fourth digit for updates since RML uses the first three -->
-    <Version>5.0.1.1</Version>
+    <Version>5.0.1.2</Version>
     
     <Description>This MonkeyLoader Game Pack for Resonite enables loading ResoniteModLoader mods as MonkeyLoader mods.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
