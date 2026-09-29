@@ -67,7 +67,7 @@ namespace ResoniteModLoader
             FileSystem = new MemoryFileSystem() { Name = $"Dummy FileSystem for {assembly.GetName().Name}" };
 
             Assembly = assembly;
-            var modType = assembly.GetTypes().Single(_resoniteModType.IsAssignableFrom);
+            var modType = assembly.GetTypes().Single(t => !t.IsAbstract && _resoniteModType.IsAssignableFrom(t));
             var resoniteMod = (ResoniteMod)Activator.CreateInstance(modType)!;
 
             AssemblyLookupMap.Add(assembly, resoniteMod);
