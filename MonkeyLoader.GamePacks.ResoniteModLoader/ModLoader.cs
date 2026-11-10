@@ -14,7 +14,7 @@ namespace ResoniteModLoader
         public static readonly string VERSION = VERSION_CONSTANT;
 
         // Update this to match RML's Version
-        internal const string VERSION_CONSTANT = "5.0.2";
+        internal const string VERSION_CONSTANT = "5.0.3";
 
         private static readonly Lazy<bool> _isHeadless = new(()
             => AppDomain.CurrentDomain.GetAssemblies()
