@@ -39,6 +39,9 @@ namespace ResoniteModLoader
         public void NotifyOfScreenshot(World world, string file, ScreenshotType type, DateTime time)
         { }
 
+        public void NotifyOfVideo(World world, string file, DateTime time)
+        { }
+
         public Task<bool> Initialize(PlatformInterface platformInterface)
         {
             ModLoaderHook.Logger.Debug(() => "Initialize() from platformInterface");
